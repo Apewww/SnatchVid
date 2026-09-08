@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SnatchVid</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #08090a;
+    --surface: #191a1b;
+    --surface-hover: #28282c;
+    --border: rgba(255,255,255,0.08);
+    --text: #f7f8f8;
+    --text-secondary: #8a8f98;
+    --accent: #7170ff;
+    --accent-hover: #828fff;
+    --success: #10b981;
+    --danger: #ef4444;
+    --radius: 8px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-feature-settings: 'cv01', 'ss03';
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 60px 20px 40px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Hero */
+  .hero {
+    text-align: center;
+    margin-bottom: 40px;
+    max-width: 520px;
+  }
+  .hero h1 {
+    font-size: 40px;
+    font-weight: 510;
+    letter-spacing: -1.056px;
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+  .hero p {
+    font-size: 16px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+  .badges {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 16px;
+  }
+  .badge {
+    font-size: 12px;
+    font-weight: 510;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.04);
+    color: var(--text-secondary);
+  }
+  .badge.yt { color: #ff4444; border-color: rgba(255,68,68,0.2); }
+  .badge.tt { color: #25f4ee; border-color: rgba(37,244,238,0.2); }
+  .badge.ig { color: #e1306c; border-color: rgba(225,48,108,0.2); }
+
+  /* Main Card */
+  .card {
+    width: 100%;
+    max-width: 480px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+  }
+
+  /* Input */
+  .input-group {
+    display: flex;
+    gap: 8px;
+  }
+  .input-group input {
+    flex: 1;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    padding: 12px 14px;
+    font-size: 15px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .input-group input:focus {
+    border-color: var(--accent);
+  }
+  .input-group input::placeholder {
+    color: #62666d;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 510;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.15s;
+    white-space: nowrap;
+  }
+  .btn-primary:hover { background: var(--accent-hover); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* Hint */
+  .hint {
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    min-height: 18px;
+  }
+
+  /* Preview */
+  .preview {
+    margin-top: 20px;
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+  .preview.show { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+  .preview-header {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+  .preview-thumb {
+    width: 120px;
+    height: 68px;
+    border-radius: 6px;
+    overflow: hidden;
+    flex-shrink: 0;
+    border: 1px solid var(--border);
+  }
+  .preview-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .preview-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .preview-info .platform-tag {
+    font-size: 11px;
+    font-weight: 510;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+  .preview-info .platform-tag.yt { color: #ff4444; }
+  .preview-info .platform-tag.tt { color: #25f4ee; }
+  .preview-info .platform-tag.ig { color: #e1306c; }
+  .preview-info h3 {
+    font-size: 14px;
+    font-weight: 510;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .preview-info .meta {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 4px;
+  }
+
+  /* Options */
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .option-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 510;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .pill-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .pill {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 9999px;
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 510;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+  .pill:hover { border-color: rgba(255,255,255,0.15); color: var(--text); }
+  .pill.active {
+    background: rgba(113,112,255,0.15);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* Download Button */
+  .btn-download {
+    width: 100%;
+    margin-top: 16px;
+    padding: 14px;
+    font-size: 15px;
+    font-weight: 510;
+    border-radius: var(--radius);
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    z-index: 100;
+    opacity: 0;
+    transition: all 0.3s ease;
+    pointer-events: none;
+  }
+  .toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+  .toast.success { border-color: var(--success); color: var(--success); }
+  .toast.error { border-color: var(--danger); color: var(--danger); }
+
+  /* Spinner */
+  .spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255,255,255,0.2);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: -2px;
+    margin-right: 6px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Progress */
+  .progress-bar {
+    margin-top: 12px;
+    height: 3px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 2px;
+    overflow: hidden;
+    display: none;
+  }
+  .progress-bar.show { display: block; }
+  .progress-bar .fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+
+  /* Footer */
+  footer {
+    margin-top: 40px;
+    font-size: 12px;
+    color: #62666d;
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>SnatchVid</h1>
+  <p>Download video dari TikTok, Instagram, dan YouTube dalam satu langkah</p>
+  <div class="badges">
+    <span class="badge yt">▶ YouTube</span>
+    <span class="badge tt">♪ TikTok</span>
+    <span class="badge ig">◎ Instagram</span>
+  </div>
+</div>
+
+<div class="card">
+  <div class="input-group">
+    <input id="url" type="text" placeholder="Tempel link video di sini…" autocomplete="off" spellcheck="false">
+    <button class="btn-primary" id="btnAction">Download</button>
+  </div>
+  <div class="hint" id="hint"></div>
+
+  <div class="preview" id="preview">
+    <div class="preview-header">
+      <div class="preview-thumb">
+        <img id="thumb" alt="">
+      </div>
+      <div class="preview-info">
+        <div class="platform-tag" id="ptag">YouTube</div>
+        <h3 id="title">Judul video</h3>
+        <div class="meta" id="meta">Uploader · 0:00</div>
+      </div>
+    </div>
+
+    <div class="options">
+      <div class="option-group">
+        <label>Kualitas</label>
+        <div class="pill-row" id="qualityRow"></div>
+      </div>
+      <div class="option-group">
+        <label>Format</label>
+        <div class="pill-row" id="formatRow"></div>
+      </div>
+      <div class="option-group" id="durGroup" style="display:none">
+        <label>Durasi</label>
+        <div class="pill-row" id="durRow"></div>
+      </div>
+    </div>
+
+    <div class="progress-bar" id="progress"><div class="fill" id="progressFill"></div></div>
+    <button class="btn-primary btn-download" id="btnDownload">Download Sekarang</button>
+  </div>
+</div>
+
+<footer>SnatchVid · by RaflyLabs</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const PLATFORMS = {
+  youtube:   { name: 'YouTube',   cls: 'yt', emoji: '▶' },
+  tiktok:    { name: 'TikTok',    cls: 'tt', emoji: '♪' },
+  instagram: { name: 'Instagram', cls: 'ig', emoji: '◎' }
+};
+const FORMATS = {
+  original: { label: 'Original',  icon: '📦', desc: 'File asli' },
+  wa_status:{ label: 'WhatsApp',  icon: '📱', desc: 'Siap post status' },
+  mp3:      { label: 'Musik',     icon: '🎵', desc: 'Audio saja' }
+};
+
+let currentQuality = 'best';
+let currentFormat = 'original';
+let currentDur = '30';
+let currentMeta = null;
+let ffmpegOK = true;
+let state = 'idle'; // idle | fetching | preview | downloading
+
+// --- Toast ---
+function showToast(msg, type = '', ms = 3000) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
+  setTimeout(() => t.className = 'toast', ms);
+}
+
+// --- Platform detection ---
+function detectPlatform(url) {
+  if (/youtube\.com|youtu\.be/i.test(url)) return 'youtube';
+  if (/tiktok\.com/i.test(url)) return 'tiktok';
+  if (/instagram\.com/i.test(url)) return 'instagram';
+  return null;
+}
+
+// --- Input events ---
+const urlInput = $('url');
+urlInput.addEventListener('input', () => {
+  const p = detectPlatform(urlInput.value.trim());
+  const h = $('hint');
+  if (p) {
+    h.innerHTML = `<span style="color:var(--${PLATFORMS[p].cls})">${PLATFORMS[p].emoji} ${PLATFORMS[p].name}</span>`;
+  } else if (urlInput.value.trim()) {
+    h.textContent = 'Link tidak dikenali';
+  } else {
+    h.textContent = '';
+  }
+});
+urlInput.addEventListener('keydown', e => { if (e.key === 'Enter') $('btnAction').click(); });
+
+// --- Fetch JSON ---
+async function fetchJSON(url, retries = 3) {
+  let lastErr;
+  for (let i = 0; i < retries; i++) {
+    try {
+      const res = await fetch(url);
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(body.detail || `HTTP ${res.status}`);
+      return body;
+    } catch (e) {
+      lastErr = e;
+      if (i < retries - 1) await new Promise(r => setTimeout(r, 1500 * (i + 1)));
+    }
+  }
+  throw lastErr;
+}
+
+// --- Render quality pills ---
+function renderQuality(meta) {
+  const row = $('qualityRow');
+  row.innerHTML = '';
+  const quals = meta.formats?.length ? meta.formats.map(f => f.height) : ['best'];
+  currentQuality = quals[0]?.toString() || 'best';
+
+  quals.forEach(q => {
+    const b = document.createElement('button');
+    b.className = 'pill' + (q.toString() === currentQuality ? ' active' : '');
+    b.textContent = q === 'best' ? '⭐ Best' : q + 'p';
+    b.onclick = () => {
+      currentQuality = q.toString();
+      row.querySelectorAll('.pill').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+    };
+    row.appendChild(b);
+  });
+}
+
+// --- Render format pills ---
+function renderFormats() {
+  const row = $('formatRow');
+  row.innerHTML = '';
+  Object.entries(FORMATS).forEach(([key, conf]) => {
+    const b = document.createElement('button');
+    b.className = 'pill' + (key === currentFormat ? ' active' : '');
+    b.innerHTML = `${conf.icon} ${conf.label}`;
+    b.onclick = () => {
+      currentFormat = key;
+      row.querySelectorAll('.pill').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+      $('durGroup').style.display = key === 'wa_status' ? '' : 'none';
+    };
+    row.appendChild(b);
+  });
+
+  // Duration pills
+  const durRow = $('durRow');
+  durRow.innerHTML = '';
+  ['15', '30', '60'].forEach(d => {
+    const b = document.createElement('button');
+    b.className = 'pill' + (d === currentDur ? ' active' : '');
+    b.textContent = d + ' dtk';
+    b.onclick = () => {
+      currentDur = d;
+      durRow.querySelectorAll('.pill').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+    };
+    durRow.appendChild(b);
+  });
+}
+
+// --- Main action: fetch info or download ---
+$('btnAction').onclick = async () => {
+  const url = urlInput.value.trim();
+  if (!url) { showToast('Masukkan link video dulu', 'error'); return; }
+  if (!detectPlatform(url)) { showToast('Link tidak didukung', 'error'); return; }
+
+  // If preview already showing, this button becomes "Download"
+  if (state === 'preview') {
+    doDownload();
+    return;
+  }
+
+  // Fetch info
+  state = 'fetching';
+  const btn = $('btnAction');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>';
+  $('hint').textContent = 'Mengambil info…';
+
+  try {
+    const meta = await fetchJSON('/api/info?url=' + encodeURIComponent(url));
+    currentMeta = meta;
+
+    const conf = PLATFORMS[meta.platform];
+    $('ptag').textContent = conf.name;
+    $('ptag').className = 'platform-tag ' + conf.cls;
+    $('thumb').src = meta.thumbnail || '';
+    $('title').textContent = meta.title || '(tanpa judul)';
+    $('meta').textContent = [meta.uploader, meta.duration].filter(Boolean).join(' · ');
+
+    renderQuality(meta);
+    renderFormats();
+    $('preview').classList.add('show');
+    $('hint').textContent = '';
+
+    // Switch button to download mode
+    btn.innerHTML = '↓ Download';
+    state = 'preview';
+  } catch (e) {
+    showToast('Gagal: ' + e.message, 'error');
+    $('hint').textContent = '';
+    state = 'idle';
+  } finally {
+    btn.disabled = false;
+  }
+};
+
+// --- Download ---
+async function doDownload() {
+  const url = urlInput.value.trim();
+  const btn = $('btnAction');
+  const dlBtn = $('btnDownload');
+  const progress = $('progress');
+  const fill = $('progressFill');
+
+  state = 'downloading';
+  btn.disabled = true;
+  dlBtn.disabled = true;
+  dlBtn.innerHTML = '<span class="spinner"></span>Memproses…';
+  progress.classList.add('show');
+  fill.style.width = '30%';
+
+  try {
+    const res = await fetch(`/api/download?url=${encodeURIComponent(url)}&quality=${currentQuality}&output=${currentFormat}&wa_duration=${currentDur}`);
+    fill.style.width = '70%';
+
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      throw new Error(body.detail || `HTTP ${res.status}`);
+    }
+
+    fill.style.width = '90%';
+    const cd = res.headers.get('Content-Disposition') || '';
+    const m = cd.match(/filename="?([^";]+)"?/);
+    const fname = m ? m[1] : 'snatchvid.mp4';
+
+    const blob = await res.blob();
+    fill.style.width = '100%';
+
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = fname;
+    a.click();
+    URL.revokeObjectURL(a.href);
+
+    showToast(`✓ ${(blob.size / 1e6).toFixed(1)} MB berhasil diunduh`, 'success');
+  } catch (e) {
+    showToast('Gagal: ' + e.message, 'error');
+  } finally {
+    btn.disabled = false;
+    dlBtn.disabled = false;
+    dlBtn.innerHTML = 'Download Sekarang';
+    progress.classList.remove('show');
+    fill.style.width = '0%';
+    state = 'preview';
+  }
+}
+
+$('btnDownload').onclick = doDownload;
+
+// Check ffmpeg
+fetch('/api/health').then(r => r.json()).then(h => { ffmpegOK = !!h.ffmpeg; }).catch(() => {});
+</script>
+</body>
+</html>

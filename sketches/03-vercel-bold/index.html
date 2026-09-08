@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SnatchVid</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --card: #131313;
+    --border: #232323;
+    --text: #fafafa;
+    --text-dim: #888;
+    --accent: #ffffff;
+    --accent-bg: #ffffff;
+    --accent-text: #0a0a0a;
+    --success: #3ecf8e;
+    --danger: #ff4d4d;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Sora', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 56px 20px 40px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Brand */
+  .brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .brand .mark {
+    width: 36px; height: 36px;
+    background: var(--accent-bg);
+    color: var(--accent-text);
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 800;
+  }
+  .brand h1 { font-size: 26px; font-weight: 800; letter-spacing: -1px; }
+  .tagline { text-align: center; font-size: 14px; color: var(--text-dim); margin-bottom: 32px; }
+
+  /* Main container */
+  .wrap { width: 100%; max-width: 440px; }
+
+  /* Paste box */
+  .paste {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 6px 6px 6px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: border-color 0.2s;
+  }
+  .paste:focus-within { border-color: #444; }
+  .paste input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-size: 15px;
+    font-family: inherit;
+  }
+  .paste input::placeholder { color: #555; }
+  .paste .go {
+    background: var(--accent-bg);
+    color: var(--accent-text);
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .paste .go:hover { opacity: 0.85; }
+  .paste .go:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .hint { font-size: 13px; color: var(--text-dim); margin-top: 10px; min-height: 18px; padding-left: 4px; }
+
+  /* Detection chip */
+  .detected {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--card);
+    border: 1px solid var(--border);
+  }
+
+  /* Preview */
+  .preview { margin-top: 24px; display: none; }
+  .preview.show { display: block; animation: fade 0.3s ease; }
+  @keyframes fade { from { opacity: 0 } to { opacity: 1 } }
+
+  .preview-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding: 12px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+  }
+  .preview-top .thumb {
+    width: 72px; height: 72px;
+    border-radius: 10px;
+    object-fit: cover;
+    display: block;
+    background: #1a1a1a;
+    flex-shrink: 0;
+  }
+  .preview-top .pi { min-width: 0; }
+  .preview-top .pi .src { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; margin-bottom: 3px; }
+  .preview-top .pi .src.yt { color: #ff4d4d; }
+  .preview-top .pi .src.tt { color: #3ecf8e; }
+  .preview-top .pi .src.ig { color: #ff7a9e; }
+  .preview-top .pi h3 { font-size: 14px; font-weight: 600; line-height: 1.35; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .preview-top .pi .meta { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+
+  /* Options */
+  .opt { margin-bottom: 14px; }
+  .opt .lbl { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .6px; color: var(--text-dim); margin-bottom: 8px; }
+  .opt .row { display: flex; gap: 6px; flex-wrap: wrap; }
+  .seg {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 8px 14px;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+    flex: 0 1 auto;
+  }
+  .seg:hover { color: var(--text); border-color: #3a3a3a; }
+  .seg.active {
+    background: var(--accent-bg);
+    color: var(--accent-text);
+    border-color: var(--accent-bg);
+    font-weight: 600;
+  }
+
+  /* Download */
+  .btn-dl {
+    width: 100%;
+    margin-top: 20px;
+    padding: 16px;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: inherit;
+    border: none;
+    border-radius: 12px;
+    background: var(--accent-bg);
+    color: var(--accent-text);
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+  }
+  .btn-dl:hover { opacity: 0.85; }
+  .btn-dl:active { transform: scale(0.98); }
+  .btn-dl:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* Progress */
+  .prog { margin-top: 12px; height: 3px; background: #1a1a1a; border-radius: 2px; overflow: hidden; display: none; }
+  .prog.show { display: block; }
+  .prog .fill { height: 100%; background: var(--success); width: 0%; transition: width 0.3s; }
+
+  footer { margin-top: 40px; font-size: 12px; color: #444; }
+
+  .spinner {
+    display: inline-block; width: 15px; height: 15px;
+    border: 2px solid rgba(10,10,10,.25); border-top-color: var(--accent-text);
+    border-radius: 50%; animation: spin .7s linear infinite; vertical-align: -2px; margin-right: 8px;
+  }
+  @keyframes spin { to { transform: rotate(360deg) } }
+</style>
+</head>
+<body>
+
+<div class="brand">
+  <div class="mark">⚡</div>
+  <h1>SnatchVid</h1>
+</div>
+<p class="tagline">Download video tanpa ribet</p>
+
+<div class="wrap">
+  <div class="paste">
+    <input id="url" type="text" placeholder="Tempel link video…" autocomplete="off" spellcheck="false">
+    <button class="go" id="go">Download</button>
+  </div>
+  <div class="hint" id="hint"></div>
+
+  <div class="preview" id="preview">
+    <div class="preview-top">
+      <img class="thumb" id="thumb" alt="">
+      <div class="pi">
+        <div class="src" id="src">YOUTUBE</div>
+        <h3 id="title">Judul video</h3>
+        <div class="meta" id="meta">Uploader · 0:00</div>
+      </div>
+    </div>
+
+    <div class="opt">
+      <div class="lbl">Kualitas</div>
+      <div class="row" id="qualityRow"></div>
+    </div>
+    <div class="opt">
+      <div class="lbl">Format</div>
+      <div class="row" id="formatRow"></div>
+    </div>
+    <div class="opt" id="durGroup" style="display:none">
+      <div class="lbl">Durasi</div>
+      <div class="row" id="durRow"></div>
+    </div>
+
+    <div class="prog" id="prog"><div class="fill" id="progFill"></div></div>
+    <button class="btn-dl" id="btnDl">⬇ Download</button>
+  </div>
+</div>
+
+<footer>SnatchVid · RaflyLabs</footer>
+
+<script>
+const $=id=>document.getElementById(id);
+const P={youtube:{n:'YouTube',c:'yt'},tiktok:{n:'TikTok',c:'tt'},instagram:{n:'Instagram',c:'ig'}};
+const F={original:{l:'📦 Original'},wa_status:{l:'📱 WhatsApp'},mp3:{l:'🎵 Musik'}};
+let cq='best',cf='original',cd='30',state='idle';
+
+function detect(u){if(/youtube\.com|youtu\.be/i.test(u))return'youtube';if(/tiktok\.com/i.test(u))return'tiktok';if(/instagram\.com/i.test(u))return'instagram';return null}
+
+const inp=$('url'),hint=$('hint');
+inp.addEventListener('input',()=>{const p=detect(inp.value.trim());if(p)hint.innerHTML=`<span class="detected">✓ ${P[p].n}</span>`;else if(inp.value.trim())hint.textContent='Link tidak dikenali';else hint.textContent=''});
+inp.addEventListener('keydown',e=>{if(e.key==='Enter')$('go').click()});
+
+async function fetchJSON(u,r=3){let e;for(let i=0;i<r;i++){try{const x=await fetch(u),b=await x.json().catch(()=>({}));if(!x.ok)throw new Error(b.detail||`HTTP ${x.status}`);return b}catch(z){e=z;if(i<r-1)await new Promise(q=>setTimeout(q,1500*(i+1)))}}throw e}
+
+function showStatus(m,ok){hint.textContent=m;hint.style.color=ok?'var(--success)':'var(--danger)';setTimeout(()=>{if(!state.includes('loading')){hint.textContent='';hint.style.color=''}},3500)}
+
+function renderQuality(m){const r=$('qualityRow');r.innerHTML='';const q=m.formats?.length?m.formats.map(f=>f.height):['best'];cq=q[0]?.toString()||'best';q.forEach(v=>{const b=document.createElement('button');b.className='seg'+(v.toString()===cq?' active':'');b.textContent=v==='best'?'⭐ Best':v+'p';b.onclick=()=>{cq=v.toString();r.querySelectorAll('.seg').forEach(x=>x.classList.remove('active'));b.classList.add('active')};r.appendChild(b)})}
+function renderFormats(){const r=$('formatRow');r.innerHTML='';Object.entries(F).forEach(([k,c])=>{const b=document.createElement('button');b.className='seg'+(k===cf?' active':'');b.textContent=c.l;b.onclick=()=>{cf=k;r.querySelectorAll('.seg').forEach(x=>x.classList.remove('active'));b.classList.add('active');$('durGroup').style.display=k==='wa_status'?'':'none'};r.appendChild(b)});const dr=$('durRow');dr.innerHTML='';['15','30','60'].forEach(v=>{const b=document.createElement('button');b.className='seg'+(v===cd?' active':'');b.textContent=v+' dtk';b.onclick=()=>{cd=v;dr.querySelectorAll('.seg').forEach(x=>x.classList.remove('active'));b.classList.add('active')};dr.appendChild(b)})}
+
+$('go').onclick=async()=>{
+  const u=inp.value.trim();
+  if(!u){showStatus('Masukkan link dulu',false);return}
+  if(!detect(u)){showStatus('Link tidak didukung',false);return}
+  const btn=$('go');btn.disabled=true;btn.innerHTML='<span class="spinner"></span>';
+  hint.textContent='Mengambil info…';hint.style.color='';
+  try{
+    const m=await fetchJSON('/api/info?url='+encodeURIComponent(u));
+    const c=P[m.platform];$('src').textContent=c.n;$('src').className='src '+c.c;
+    $('thumb').src=m.thumbnail||'';$('title').textContent=m.title||'(tanpa judul)';
+    $('meta').textContent=[m.uploader,m.duration].filter(Boolean).join(' · ');
+    renderQuality(m);renderFormats();$('preview').classList.add('show');hint.textContent='';hint.style.color='';
+    btn.innerHTML='↻ Ulangi';state='preview'
+  }catch(e){showStatus('Gagal: '+e.message,false);state='idle'}
+  finally{btn.disabled=false;if(state!=='preview')btn.innerHTML='Download'}
+};
+
+$('btnDl').onclick=async()=>{
+  const u=inp.value.trim(),b=$('btnDl'),pr=$('prog'),f=$('progFill');
+  state='loading';b.disabled=true;b.innerHTML='<span class="spinner"></span>Memproses…';
+  pr.classList.add('show');f.style.width='30%';
+  try{
+    const r=await fetch(`/api/download?url=${encodeURIComponent(u)}&quality=${cq}&output=${cf}&wa_duration=${cd}`);f.style.width='70%';
+    if(!r.ok){const x=await r.json().catch(()=>({}));throw new Error(x.detail||`HTTP ${r.status}`)}
+    f.style.width='90%';const h=r.headers.get('Content-Disposition')||'';const mt=h.match(/filename="?([^";]+)"?/);const fn=mt?mt[1]:'snatchvid.mp4';
+    const blob=await r.blob();f.style.width='100%';const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fn;a.click();URL.revokeObjectURL(a.href);
+    showStatus(`✓ ${(blob.size/1e6).toFixed(1)} MB terunduh`,true)
+  }catch(e){showStatus('Gagal: '+e.message,false)}
+  finally{b.disabled=false;b.innerHTML='⬇ Download';pr.classList.remove('show');f.style.width='0%';if(state==='loading')state='preview'}
+};
+</script>
+</body>
+</html>

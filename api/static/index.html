@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SnatchVid — TikTok · Instagram · YouTube Downloader</title>
+<style>
+  :root {
+    --bg: #0b0e14;
+    --bg2: #12161f;
+    --card: #171c28;
+    --border: #232a3b;
+    --text: #e8ecf4;
+    --dim: #8b94a7;
+    --accent: #7c5cff;
+    --accent2: #00e5a0;
+    --danger: #ff5c7c;
+    --yt: #ff0033;
+    --tt: #25f4ee;
+    --ig: #e1306c;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: radial-gradient(1200px 600px at 80% -10%, #1a1440 0%, var(--bg) 55%), var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+  }
+  .logo { text-align: center; margin-bottom: 12px; }
+  .logo h1 {
+    font-size: 42px; font-weight: 800; letter-spacing: -1px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .logo p { color: var(--dim); font-size: 14px; margin-top: 4px; }
+  .badges { display: flex; gap: 8px; justify-content: center; margin: 14px 0 30px; }
+  .badge {
+    font-size: 12px; font-weight: 600; padding: 5px 12px; border-radius: 999px;
+    border: 1px solid var(--border); background: var(--card); color: var(--dim);
+  }
+  .badge.yt { color: var(--yt); border-color: #3a1520; }
+  .badge.tt { color: var(--tt); border-color: #0f3a3a; }
+  .badge.ig { color: var(--ig); border-color: #3a1528; }
+
+  .card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+    padding: 24px; width: 100%; max-width: 560px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.4);
+  }
+  .input-row { display: flex; gap: 10px; }
+  #url {
+    flex: 1; background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
+    color: var(--text); padding: 13px 16px; font-size: 15px; outline: none;
+    transition: border-color .2s;
+  }
+  #url:focus { border-color: var(--accent); }
+  #url::placeholder { color: var(--dim); }
+  button {
+    border: none; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 14px;
+    padding: 13px 20px; transition: transform .1s, opacity .2s; color: #0b0e14;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+  button:hover { opacity: .88; }
+  button:active { transform: scale(.97); }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  button.ghost {
+    background: var(--bg2); color: var(--dim); border: 1px solid var(--border);
+  }
+  .platform-hint { margin-top: 10px; font-size: 13px; color: var(--dim); min-height: 18px; display: flex; align-items: center; gap: 6px; }
+
+  .preview { margin-top: 20px; display: none; }
+  .preview.show { display: block; animation: fadeIn .35s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  .thumb-wrap { position: relative; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+  .thumb-wrap img { width: 100%; display: block; aspect-ratio: 16/9; object-fit: cover; }
+  .thumb-overlay {
+    position: absolute; inset: 0; display: flex; align-items: flex-end; padding: 14px;
+    background: linear-gradient(transparent 40%, rgba(0,0,0,.85));
+  }
+  .thumb-overlay .meta { color: #fff; }
+  .thumb-overlay .dur {
+    background: rgba(0,0,0,.7); padding: 3px 8px; border-radius: 6px; font-size: 12px; font-weight: 600;
+  }
+  .ptag { font-size: 11px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; margin-bottom: 6px; }
+  .ptag.yt { color: var(--yt); } .ptag.tt { color: var(--tt); } .ptag.ig { color: var(--ig); }
+
+  .details { padding: 14px 4px 0; }
+  .details h3 { font-size: 16px; font-weight: 700; line-height: 1.4; }
+  .details .sub { color: var(--dim); font-size: 13px; margin-top: 4px; }
+
+  .quality-row { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+  .q-btn {
+    background: var(--bg2); border: 1px solid var(--border); color: var(--dim);
+    padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;
+    transition: all .15s;
+  }
+  .q-btn:hover { border-color: var(--accent); color: var(--text); }
+  .q-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  .output-wrap { margin-top: 16px; }
+  .section-label { font-size: 12px; color: var(--dim); font-weight: 600; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px; }
+  .output-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .o-btn {
+    background: var(--bg2); border: 1px solid var(--border); color: var(--dim);
+    padding: 10px 14px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer;
+    transition: all .15s; text-align: left; line-height: 1.3; flex: 1; min-width: 130px;
+  }
+  .o-btn .o-emoji { display: block; font-size: 18px; margin-bottom: 2px; }
+  .o-btn .o-label { color: var(--text); }
+  .o-btn .o-desc { font-size: 11px; color: var(--dim); font-weight: 400; }
+  .o-btn:hover { border-color: var(--accent); }
+  .o-btn.active { background: linear-gradient(135deg, rgba(99,102,241,.18), rgba(16,185,129,.12)); border-color: var(--accent); }
+  .o-btn.active .o-label { color: var(--accent2); }
+  .o-btn:disabled { opacity: .4; cursor: not-allowed; }
+  .wa-opt { margin-top: 10px; }
+  .wa-label { display: block; font-size: 12px; color: var(--dim); margin-bottom: 6px; }
+  .wa-opt .q-btn { flex: none; }
+
+  .dl-btn { width: 100%; margin-top: 16px; padding: 14px; font-size: 15px; }
+  .dl-btn:disabled { opacity: .6; }
+
+  .status { margin-top: 14px; font-size: 13px; color: var(--dim); text-align: center; min-height: 18px; }
+  .status.error { color: var(--danger); }
+  .status.ok { color: var(--accent2); }
+
+  .spinner {
+    display: inline-block; width: 14px; height: 14px; vertical-align: -2px; margin-right: 6px;
+    border: 2px solid rgba(255,255,255,.25); border-top-color: #fff; border-radius: 50%;
+    animation: spin .7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  footer { margin-top: 30px; color: var(--dim); font-size: 12px; text-align: center; }
+  footer code { background: var(--card); padding: 2px 7px; border-radius: 5px; border: 1px solid var(--border); }
+</style>
+</head>
+<body>
+
+  <div class="logo">
+    <h1>⚡ SnatchVid</h1>
+    <p>Download video TikTok · Instagram · YouTube — tanpa ribet</p>
+  </div>
+  <div class="badges">
+    <span class="badge yt">▶ YouTube</span>
+    <span class="badge tt">🎵 TikTok</span>
+    <span class="badge ig">📸 Instagram</span>
+  </div>
+
+  <div class="card">
+    <div class="input-row">
+      <input id="url" type="text" placeholder="Tempel link video di sini…" autocomplete="off" spellcheck="false">
+      <button id="btnInfo">🔍 Cek</button>
+    </div>
+    <div class="platform-hint" id="hint"></div>
+
+    <div class="preview" id="preview">
+      <div class="thumb-wrap">
+        <img id="thumb" alt="Thumbnail">
+        <div class="thumb-overlay">
+          <div>
+            <div class="ptag" id="ptag">YouTube</div>
+            <span class="dur" id="dur">0:00</span>
+          </div>
+        </div>
+      </div>
+      <div class="details">
+        <h3 id="title">Judul video</h3>
+        <div class="sub" id="sub">Uploader</div>
+      </div>
+      <div class="quality-row" id="qualityRow"></div>
+
+      <div class="output-wrap">
+        <div class="section-label">Format output</div>
+        <div class="output-row" id="outputRow"></div>
+        <div class="wa-opt" id="waOpt" style="display:none">
+          <label class="wa-label">Durasi max (untuk WA Status)</label>
+          <div class="output-row" id="waDurRow"></div>
+        </div>
+      </div>
+
+      <button class="dl-btn" id="btnDownload" disabled>⬇ Download Video</button>
+      <div class="status" id="status"></div>
+    </div>
+  </div>
+
+  <footer>
+    Demo build — <code>GET /api/info</code> &amp; <code>GET /api/download</code> · by RaflyLabs
+  </footer>
+
+<script>
+const $ = id => document.getElementById(id);
+const PLATFORMS = { youtube: {name:'YouTube', cls:'yt', emoji:'▶'}, tiktok: {name:'TikTok', cls:'tt', emoji:'🎵'}, instagram: {name:'Instagram', cls:'ig', emoji:'📸'} };
+let currentQuality = '720';
+let currentOutput = 'original';
+let currentWADur = '30';
+let currentMeta = null;
+let ffmpegOK = true;
+
+const urlInput = $('url');
+const hint = $('hint');
+
+function detectPlatform(url) {
+  if (/youtube\.com|youtu\.be/i.test(url)) return 'youtube';
+  if (/tiktok\.com/i.test(url)) return 'tiktok';
+  if (/instagram\.com/i.test(url)) return 'instagram';
+  return null;
+}
+
+urlInput.addEventListener('input', () => {
+  const p = detectPlatform(urlInput.value.trim());
+  if (p) {
+    const conf = PLATFORMS[p];
+    hint.innerHTML = `<span style="color:var(--${conf.cls})">${conf.emoji} ${conf.name} terdeteksi ✓</span>`;
+  } else if (urlInput.value.trim()) {
+    hint.textContent = '⚠ Support: YouTube, TikTok, Instagram';
+  } else {
+    hint.textContent = '';
+  }
+});
+
+urlInput.addEventListener('keydown', e => { if (e.key === 'Enter') $('btnInfo').click(); });
+
+async function fetchJSON(url, retries = 3) {
+  let lastErr;
+  for (let i = 0; i < retries; i++) {
+    try {
+      const res = await fetch(url);
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(body.detail || `HTTP ${res.status}`);
+      return body;
+    } catch (e) {
+      lastErr = e;
+      if (i < retries - 1) await new Promise(r => setTimeout(r, 2000 * (i + 1)));
+    }
+  }
+  throw lastErr;
+}
+
+function renderQuality(meta) {
+  const row = $('qualityRow');
+  row.innerHTML = '';
+  const quals = meta.formats && meta.formats.length ? meta.formats.map(f => f.height) : [];
+  // Kalau TikTok/IG tanpa list format → cuma "best"
+  const options = quals.length ? quals : ['best'];
+  currentQuality = options[0].toString();
+
+  options.forEach(q => {
+    const b = document.createElement('button');
+    b.className = 'q-btn' + (q.toString() === currentQuality ? ' active' : '');
+    b.textContent = q === 'best' ? '⭐ Best' : q + 'p';
+    b.onclick = () => {
+      currentQuality = q.toString();
+      document.querySelectorAll('.q-btn').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+    };
+    row.appendChild(b);
+  });
+}
+
+// ----- Format output -----
+const OUTPUT_ICONS = { original: '📦', wa_status: '📱', mp3: '🎵' };
+
+function renderOutputTypes() {
+  const row = $('outputRow');
+  row.innerHTML = '';
+
+  // Ambil daftar output type dari API (sekali saja)
+  fetch('/api/output-types')
+    .then(r => r.json())
+    .then(types => {
+      Object.entries(types).forEach(([key, conf]) => {
+        const needsFF = conf.needs_ffmpeg && !ffmpegOK;
+        const b = document.createElement('button');
+        b.className = 'o-btn' + (key === currentOutput ? ' active' : '');
+        b.disabled = needsFF;
+        b.innerHTML = `<span class="o-emoji">${conf.emoji}</span><span class="o-label">${conf.label}</span> <span class="o-desc">${conf.desc}</span>`;
+        b.onclick = () => {
+          currentOutput = key;
+          document.querySelectorAll('.o-btn').forEach(x => x.classList.remove('active'));
+          b.classList.add('active');
+          $('waOpt').style.display = key === 'wa_status' ? 'block' : 'none';
+        };
+        row.appendChild(b);
+      });
+      // Kalau wa_status butuh ffmpeg dan tidak ada → pilihan fallback ke original
+      if (types.wa_status.needs_ffmpeg && !ffmpegOK && currentOutput === 'wa_status') {
+        currentOutput = 'original';
+        document.querySelectorAll('.o-btn')[0]?.classList.add('active');
+      }
+    })
+    .catch(() => {});
+
+  // Durasi pilihan untuk WA (15/30/60 — 30s default = batas status)
+  const durRow = $('waDurRow');
+  durRow.innerHTML = '';
+  ['15', '30', '60'].forEach(d => {
+    const b = document.createElement('button');
+    b.className = 'q-btn' + (d === currentWADur ? ' active' : '');
+    b.textContent = d + ' dtk';
+    b.onclick = () => {
+      currentWADur = d;
+      durRow.querySelectorAll('.q-btn').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+    };
+    durRow.appendChild(b);
+  });
+}
+
+// Cek status ffmpeg saat load
+fetch('/api/health').then(r => r.json()).then(h => { ffmpegOK = !!h.ffmpeg; renderOutputTypes(); }).catch(() => {});
+
+$('btnInfo').onclick = async () => {
+  const url = urlInput.value.trim();
+  const status = $('status');
+  if (!url) { status.textContent = 'Isi URL dulu ya 😉'; status.className = 'status error'; return; }
+  if (!detectPlatform(url)) { status.textContent = 'URL tidak didukung!'; status.className = 'status error'; return; }
+
+  const btn = $('btnInfo');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Mengecek…';
+  status.textContent = 'Mengambil info video…'; status.className = 'status';
+
+  try {
+    const meta = await fetchJSON('/api/info?url=' + encodeURIComponent(url));
+    currentMeta = meta;
+
+    const conf = PLATFORMS[meta.platform];
+    $('ptag').textContent = `${conf.emoji} ${conf.name}`;
+    $('ptag').className = 'ptag ' + conf.cls;
+    $('thumb').src = meta.thumbnail || 'data:image/svg+xml;base64,' + btoa('<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360"><rect fill="#232a3b" width="640" height="360"/><text x="320" y="190" fill="#8b94a7" font-size="28" text-anchor="middle" font-family="sans-serif">Tidak ada thumbnail</text></svg>');
+    $('title').textContent = meta.title || '(tanpa judul)';
+    $('sub').textContent = [meta.uploader, meta.duration_sec ? `⏱ ${meta.duration}` : null].filter(Boolean).join(' · ');
+    $('dur').textContent = meta.duration || '?';
+
+    renderQuality(meta);
+    $('preview').classList.add('show');
+    $('btnDownload').disabled = false;
+    status.textContent = meta.quality_note || '';
+    status.className = meta.quality_note ? 'status error' : 'status';
+  } catch (e) {
+    status.textContent = '❌ ' + e.message;
+    status.className = 'status error';
+  } finally {
+    btn.disabled = false; btn.innerHTML = '🔍 Cek';
+  }
+};
+
+$('btnDownload').onclick = async () => {
+  const status = $('status');
+  const btn = $('btnDownload');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Downloading…';
+  status.textContent = 'Memproses video…'; status.className = 'status';
+
+  try {
+    const url = urlInput.value.trim();
+    const res = await fetch(`/api/download?url=${encodeURIComponent(url)}&quality=${currentQuality}&output=${currentOutput}&wa_duration=${currentWADur}`);
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      throw new Error(body.detail || `HTTP ${res.status}`);
+    }
+    // Ambil filename dari header Content-Disposition
+    const cd = res.headers.get('Content-Disposition') || '';
+    const m = cd.match(/filename="?([^";]+)"?/);
+    const fname = m ? m[1] : 'snatchvid.mp4';
+
+    const blob = await res.blob();
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = fname;
+    a.click();
+    URL.revokeObjectURL(a.href);
+
+    status.textContent = `✅ Berhasil! ${(blob.size/1e6).toFixed(1)} MB disimpan.`;
+    status.className = 'status ok';
+  } catch (e) {
+    status.textContent = '❌ ' + e.message;
+    status.className = 'status error';
+  } finally {
+    btn.disabled = false; btn.innerHTML = '⬇ Download Video';
+  }
+};
+</script>
+</body>
+</html>

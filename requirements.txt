@@ -1,0 +1,6 @@
+# SnatchVid dependencies
+# Python 3.11+ direkomendasikan (yt-dlp deprecated dukungan 3.10)
+yt-dlp>=2026.8.19
+curl_cffi>=0.16.0        # WAJIB: buat impersonation TikTok/Instagram
+fastapi>=0.115
+uvicorn[standard]>=0.30

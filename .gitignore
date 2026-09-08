@@ -1,0 +1,38 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# Virtual Environments
+venv/
+.venv/
+env/
+ENV/
+
+# Downloaded media & temporary files
+downloads/*
+!downloads/.gitkeep
+*.mp4
+*.webm
+*.mkv
+*.m4a
+*.mp3
+*.part
+*.ytdl
+
+# Environment & local configurations
+.env
+.env.local
+
+# IDEs & Operating System files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log
