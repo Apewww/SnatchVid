@@ -1,0 +1,1 @@
+selalu commit pada tiap perubahan !
