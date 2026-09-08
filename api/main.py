@@ -66,6 +66,15 @@ def index():
     return FileResponse(Path(__file__).parent / "static" / "index.html")
 
 
+@app.get("/favicon.ico")
+def favicon():
+    """Serve brand favicon."""
+    icon_path = Path(__file__).parent / "static" / "assets" / "snatchvid-icon.png"
+    if icon_path.exists():
+        return FileResponse(icon_path, media_type="image/png")
+    return JSONResponse(status_code=404, content={"detail": "Not found"})
+
+
 @app.get("/api/health")
 def health():
     return {

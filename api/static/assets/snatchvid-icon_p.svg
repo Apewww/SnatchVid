@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-labelledby="title desc">
+  <title id="title">SnatchVid icon</title>
+  <desc id="desc">A vermilion geometric media frame with a charcoal offset block being pulled from its center.</desc>
+  <path fill="#C8553D" d="M256 144h512c35.346 0 64 28.654 64 64v192H578c-36.451 0-66 29.549-66 66v96c0 36.451 29.549 66 66 66h254v192c0 35.346-28.654 64-64 64H256c-35.346 0-64-28.654-64-64V208c0-35.346 28.654-64 64-64Z"/>
+  <rect x="594" y="438" width="194" height="148" rx="24" fill="#171714"/>
+</svg>
