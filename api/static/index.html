@@ -960,72 +960,38 @@
       padding-top: var(--space-4);
       border-top: 1px solid var(--color-line);
       display: flex;
-      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
       gap: var(--space-3);
       font-size: 12.5px;
-      color: var(--color-ink-soft);
+      color: var(--color-ink-faint);
       user-select: none;
     }
 
-    .footer-status-row {
+    .footer-left {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      gap: var(--space-2);
+      flex-wrap: wrap;
     }
 
-    .footer-status-indicator {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-    }
-
-    .status-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background-color: var(--color-success);
-      flex-shrink: 0;
-    }
-
-    .status-dot.warning {
-      background-color: var(--color-warning);
-    }
-
-    .status-dot.pulse {
-      position: relative;
-    }
-
-    .status-dot.pulse::after {
-      content: '';
-      position: absolute;
-      inset: -2px;
-      border-radius: 50%;
-      border: 1px solid var(--color-success);
-      animation: dotRing 2s infinite ease-out;
-    }
-
-    @keyframes dotRing {
-      0% { transform: scale(1); opacity: 0.8; }
-      100% { transform: scale(2.2); opacity: 0; }
-    }
-
-    .status-text {
+    .footer-copy {
       color: var(--color-ink-soft);
-      font-family: var(--font-sans);
+      font-weight: 500;
     }
 
-    .footer-platforms-text {
+    .footer-sep {
+      color: var(--color-line-strong);
+      user-select: none;
+    }
+
+    .footer-platforms {
       color: var(--color-ink-faint);
     }
 
-    .footer-credit-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-top: 1px dashed var(--color-line);
-      padding-top: var(--space-3);
-      font-size: 12px;
+    .footer-right {
       color: var(--color-ink-faint);
+      white-space: nowrap;
     }
 
     .credit-link {
@@ -1038,6 +1004,8 @@
 
     .credit-link:hover {
       color: var(--color-accent);
+      border-color: var(--color-accent);
+    }
       border-color: var(--color-accent);
     }
 
@@ -1122,8 +1090,7 @@
         grid-template-columns: 1fr;
       }
 
-      .footer-status-row,
-      .footer-credit-row {
+      .workbench-footer {
         flex-direction: column;
         align-items: flex-start;
         gap: var(--space-2);
@@ -1406,25 +1373,15 @@
         </article>
       </div>
 
-      <!-- Footer Status & Credits (Section 10 & 11) -->
+      <!-- Footer -->
       <footer class="workbench-footer">
-        <!-- Status Bar -->
-        <div class="footer-status-row">
-          <div class="footer-status-indicator">
-            <span id="ffmpegDot" class="status-dot pulse"></span>
-            <span id="ffmpegStatusText" class="status-text" data-i18n="statusFfmpegReady">Ready · ffmpeg available</span>
-          </div>
-          <div class="footer-platforms-text" data-i18n="footerPlatforms">
-            Supports YouTube, TikTok, Instagram
-          </div>
+        <div class="footer-left">
+          <span class="footer-copy">© 2026 SnatchVid</span>
+          <span class="footer-sep" aria-hidden="true">·</span>
+          <span class="footer-platforms" data-i18n="footerPlatforms">Supports YouTube, TikTok, Instagram</span>
         </div>
-
-        <!-- Copyright & Credit Row -->
-        <div class="footer-credit-row">
-          <span>© 2026 SnatchVid</span>
-          <span>
-            Credit: <a href="https://github.com/Apewww" target="_blank" rel="noopener noreferrer" class="credit-link">Stellochron (Apewww)</a>
-          </span>
+        <div class="footer-right">
+          <span>Credit: <a href="https://github.com/Apewww" target="_blank" rel="noopener noreferrer" class="credit-link">Stellochron (Apewww)</a></span>
         </div>
       </footer>
 
@@ -1592,13 +1549,6 @@
         // Update active classes on switcher
         langBtnEn.classList.toggle('active', lang === 'en');
         langBtnId.classList.toggle('active', lang === 'id');
-
-        // Refresh ffmpeg status text
-        if (ffmpegAvailable) {
-          ffmpegStatusText.textContent = dict.statusFfmpegReady;
-        } else {
-          ffmpegStatusText.textContent = dict.statusFfmpegLimited;
-        }
       }
 
       /* -----------------------------------------------------------------------
@@ -1670,8 +1620,6 @@
       const successFilename = document.getElementById('successFilename');
       const successSize = document.getElementById('successSize');
       const btnDownloadAnother = document.getElementById('btnDownloadAnother');
-      const ffmpegDot = document.getElementById('ffmpegDot');
-      const ffmpegStatusText = document.getElementById('ffmpegStatusText');
 
       /* -----------------------------------------------------------------------
          Navigation Tab Switching (App / About)
@@ -1772,17 +1720,9 @@
           if (res.ok) {
             const data = await res.json();
             ffmpegAvailable = !!data.ffmpeg;
-            if (ffmpegAvailable) {
-              ffmpegDot.className = 'status-dot pulse';
-              ffmpegStatusText.textContent = I18N[currentLang].statusFfmpegReady;
-            } else {
-              ffmpegDot.className = 'status-dot warning';
-              ffmpegStatusText.textContent = I18N[currentLang].statusFfmpegLimited;
-            }
           }
         } catch (e) {
-          ffmpegDot.className = 'status-dot warning';
-          ffmpegStatusText.textContent = I18N[currentLang].statusStandalone;
+          ffmpegAvailable = true;
         }
         updateOutputOptionsAvailability();
       }
