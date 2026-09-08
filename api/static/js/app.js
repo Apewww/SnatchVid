@@ -64,7 +64,20 @@
       step2Title: "Paste & Inspect",
       step2Desc: "Paste the link into the SnatchVid input bar and click \"Inspect link\" to retrieve verified video metadata.",
       step3Title: "Select Quality & Save",
-      step3Desc: "Choose your desired resolution or output format (Original, WhatsApp Status, or MP3) and click \"Download video\"."
+      step3Desc: "Choose your desired resolution or output format (Original, WhatsApp Status, or MP3) and click \"Download video\".",
+      metricsTriggerSuffix: "downloads",
+      metricsModalTitle: "Usage Metrics",
+      metricsModalSubtitle: "Real-time local processing & download statistics",
+      metricTotalDownloads: "Total Downloads",
+      metricSuccessRate: "Success Rate",
+      metricTotalDuration: "Total Duration",
+      metricMediaProcessed: "Media processed",
+      metricsPlatformBreakdown: "Platform Breakdown",
+      metricsFormatBreakdown: "Formats Distributed",
+      btnRefresh: "Refresh",
+      inspectedLabel: "inspected",
+      failedLabel: "failed",
+      updatedJustNow: "Updated: just now"
     },
     id: {
       tagline: "utilitas media lokal",
@@ -125,7 +138,20 @@
       step2Title: "Tempel & Periksa",
       step2Desc: "Tempel link ke kolom SnatchVid lalu klik \"Periksa link\" untuk mengambil metadata video terverifikasi.",
       step3Title: "Pilih Kualitas & Simpan",
-      step3Desc: "Pilih resolusi atau format output yang diinginkan (Original, Status WhatsApp, atau MP3) lalu klik \"Download video\"."
+      step3Desc: "Pilih resolusi atau format output yang diinginkan (Original, Status WhatsApp, atau MP3) lalu klik \"Download video\".",
+      metricsTriggerSuffix: "unduhan",
+      metricsModalTitle: "Statistik Penggunaan",
+      metricsModalSubtitle: "Statistik pengunduhan & pemrosesan media lokal",
+      metricTotalDownloads: "Total Unduhan",
+      metricSuccessRate: "Tingkat Keberhasilan",
+      metricTotalDuration: "Total Durasi Media",
+      metricMediaProcessed: "Media diproses",
+      metricsPlatformBreakdown: "Perincian Platform",
+      metricsFormatBreakdown: "Format Output",
+      btnRefresh: "Segarkan",
+      inspectedLabel: "diperiksa",
+      failedLabel: "gagal",
+      updatedJustNow: "Diperbarui: baru saja"
     }
   };
 
@@ -166,9 +192,42 @@
   const btnDownload = document.getElementById('btnDownload');
   const downloadProgressBar = document.getElementById('downloadProgressBar');
   const successCard = document.getElementById('successCard');
-  const successFilename = document.getElementById('successFilename');
-  const successSize = document.getElementById('successSize');
   const btnDownloadAnother = document.getElementById('btnDownloadAnother');
+
+  // DOM Elements - Metrics
+  const btnMetricsTrigger = document.getElementById('btnMetricsTrigger');
+  const metricsHeaderBadge = document.getElementById('metricsHeaderBadge');
+  const metricsModal = document.getElementById('metricsModal');
+  const btnMetricsClose = document.getElementById('btnMetricsClose');
+  const btnMetricsRefresh = document.getElementById('btnMetricsRefresh');
+  const metricsLastUpdated = document.getElementById('metricsLastUpdated');
+  
+  const metricValDownloads = document.getElementById('metricValDownloads');
+  const metricSubInspections = document.getElementById('metricSubInspections');
+  const metricValSuccessRate = document.getElementById('metricValSuccessRate');
+  const metricSubFailures = document.getElementById('metricSubFailures');
+  const metricValDuration = document.getElementById('metricValDuration');
+
+  const metricYTCount = document.getElementById('metricYTCount');
+  const metricYTDur = document.getElementById('metricYTDur');
+  const metricYTPct = document.getElementById('metricYTPct');
+  const metricYTBar = document.getElementById('metricYTBar');
+
+  const metricTTCount = document.getElementById('metricTTCount');
+  const metricTTDur = document.getElementById('metricTTDur');
+  const metricTTPct = document.getElementById('metricTTPct');
+  const metricTTBar = document.getElementById('metricTTBar');
+
+  const metricIGCount = document.getElementById('metricIGCount');
+  const metricIGDur = document.getElementById('metricIGDur');
+  const metricIGPct = document.getElementById('metricIGPct');
+  const metricIGBar = document.getElementById('metricIGBar');
+
+  const metricFmtOriginal = document.getElementById('metricFmtOriginal');
+  const metricFmtWA = document.getElementById('metricFmtWA');
+  const metricFmtMP3 = document.getElementById('metricFmtMP3');
+
+  let cachedMetrics = null;
 
   function applyLanguage(lang) {
     currentLang = lang;
@@ -196,6 +255,10 @@
     // Update active classes on switcher
     if (langBtnEn) langBtnEn.classList.toggle('active', lang === 'en');
     if (langBtnId) langBtnId.classList.toggle('active', lang === 'id');
+
+    if (cachedMetrics) {
+      renderMetrics(cachedMetrics);
+    }
   }
 
   /* -----------------------------------------------------------------------
@@ -717,12 +780,119 @@
           </svg>
           <span>${dict.btnDownload}</span>
         `;
+        fetchAndRenderMetrics();
       }
     });
   }
 
-  // Initialize language & backend health
+  /* -----------------------------------------------------------------------
+     Usage Metrics & Modal Handlers
+     ----------------------------------------------------------------------- */
+  async function fetchAndRenderMetrics() {
+    try {
+      const res = await fetch('/api/metrics');
+      if (res.ok) {
+        cachedMetrics = await res.json();
+        renderMetrics(cachedMetrics);
+      }
+    } catch (err) {
+      console.warn('Could not fetch metrics:', err);
+    }
+  }
+
+  function renderMetrics(data) {
+    if (!data) return;
+    const dict = I18N[currentLang];
+
+    // Header badge
+    if (metricsHeaderBadge) {
+      metricsHeaderBadge.textContent = `${data.total_downloads} ${dict.metricsTriggerSuffix}`;
+    }
+
+    // Bento summary
+    if (metricValDownloads) metricValDownloads.textContent = data.total_downloads;
+    if (metricSubInspections) metricSubInspections.textContent = `${data.total_inspections} ${dict.inspectedLabel}`;
+    if (metricValSuccessRate) metricValSuccessRate.textContent = `${data.success_rate}%`;
+    if (metricSubFailures) metricSubFailures.textContent = `${data.failed_downloads} ${dict.failedLabel}`;
+    if (metricValDuration) {
+      const durObj = data.total_duration_formatted || {};
+      metricValDuration.textContent = durObj[currentLang] || durObj.en || '0 sec';
+    }
+
+    // Platform Breakdown
+    const p = data.platforms || {};
+
+    // YouTube
+    const yt = p.youtube || { downloaded: 0, share_percentage: 0, duration_formatted: {} };
+    if (metricYTCount) metricYTCount.textContent = `${yt.downloaded} ${dict.metricsTriggerSuffix}`;
+    if (metricYTDur) metricYTDur.textContent = yt.duration_formatted ? (yt.duration_formatted[currentLang] || yt.duration_formatted.en) : '0 sec';
+    if (metricYTPct) metricYTPct.textContent = `${yt.share_percentage}%`;
+    if (metricYTBar) metricYTBar.style.width = `${Math.min(100, yt.share_percentage)}%`;
+
+    // TikTok
+    const tt = p.tiktok || { downloaded: 0, share_percentage: 0, duration_formatted: {} };
+    if (metricTTCount) metricTTCount.textContent = `${tt.downloaded} ${dict.metricsTriggerSuffix}`;
+    if (metricTTDur) metricTTDur.textContent = tt.duration_formatted ? (tt.duration_formatted[currentLang] || tt.duration_formatted.en) : '0 sec';
+    if (metricTTPct) metricTTPct.textContent = `${tt.share_percentage}%`;
+    if (metricTTBar) metricTTBar.style.width = `${Math.min(100, tt.share_percentage)}%`;
+
+    // Instagram
+    const ig = p.instagram || { downloaded: 0, share_percentage: 0, duration_formatted: {} };
+    if (metricIGCount) metricIGCount.textContent = `${ig.downloaded} ${dict.metricsTriggerSuffix}`;
+    if (metricIGDur) metricIGDur.textContent = ig.duration_formatted ? (ig.duration_formatted[currentLang] || ig.duration_formatted.en) : '0 sec';
+    if (metricIGPct) metricIGPct.textContent = `${ig.share_percentage}%`;
+    if (metricIGBar) metricIGBar.style.width = `${Math.min(100, ig.share_percentage)}%`;
+
+    // Formats
+    const fmts = data.formats || {};
+    if (metricFmtOriginal) metricFmtOriginal.textContent = fmts.original || 0;
+    if (metricFmtWA) metricFmtWA.textContent = fmts.wa_status || 0;
+    if (metricFmtMP3) metricFmtMP3.textContent = fmts.mp3 || 0;
+
+    if (metricsLastUpdated) {
+      metricsLastUpdated.textContent = dict.updatedJustNow;
+    }
+  }
+
+  function openMetricsModal() {
+    if (!metricsModal) return;
+    metricsModal.hidden = false;
+    void metricsModal.offsetWidth; // Force reflow
+    metricsModal.classList.add('open');
+    fetchAndRenderMetrics();
+  }
+
+  function closeMetricsModal() {
+    if (!metricsModal) return;
+    metricsModal.classList.remove('open');
+    setTimeout(() => {
+      if (!metricsModal.classList.contains('open')) {
+        metricsModal.hidden = true;
+      }
+    }, 240);
+  }
+
+  if (btnMetricsTrigger) btnMetricsTrigger.addEventListener('click', openMetricsModal);
+  if (btnMetricsClose) btnMetricsClose.addEventListener('click', closeMetricsModal);
+  if (btnMetricsRefresh) btnMetricsRefresh.addEventListener('click', fetchAndRenderMetrics);
+
+  if (metricsModal) {
+    metricsModal.addEventListener('click', function (e) {
+      if (e.target === metricsModal) {
+        closeMetricsModal();
+      }
+    });
+  }
+
+  window.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && metricsModal && !metricsModal.hidden) {
+      closeMetricsModal();
+    }
+  });
+
+  // Initialize language, backend health & usage metrics
   applyLanguage(currentLang);
   initBackendHealth();
+  fetchAndRenderMetrics();
 
 })();

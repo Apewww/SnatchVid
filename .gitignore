@@ -17,6 +17,8 @@ ENV/
 # Downloaded media & temporary files
 downloads/*
 !downloads/.gitkeep
+data/*
+!data/.gitkeep
 *.mp4
 *.webm
 *.mkv

@@ -1111,4 +1111,363 @@ body {
   .brand-divider {
     display: none;
   }
+  .metrics-trigger-btn {
+    padding: 3px 8px;
+    font-size: 11px;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   Usage Metrics Trigger & Modal Dialog (docs/DESIGN.md Quiet Utility)
+   ------------------------------------------------------------------------- */
+.metrics-trigger-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-pill);
+  padding: 4px 10px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-ink-soft);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.metrics-trigger-btn:hover {
+  background-color: #FFFFFF;
+  border-color: var(--color-line-strong);
+  color: var(--color-ink);
+  transform: translateY(-1px);
+}
+
+.metrics-pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--color-accent);
+  display: inline-block;
+  box-shadow: 0 0 0 0 rgba(200, 85, 61, 0.4);
+  animation: pulse-dot 2.5s infinite;
+}
+
+@keyframes pulse-dot {
+  0% {
+    box-shadow: 0 0 0 0 rgba(200, 85, 61, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(200, 85, 61, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(200, 85, 61, 0);
+  }
+}
+
+/* Modal Overlay */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(23, 23, 20, 0.48);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-normal);
+}
+
+.modal-backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-window {
+  background-color: var(--color-paper);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-window);
+  box-shadow: 0 24px 56px rgba(23, 23, 20, 0.24);
+  width: 100%;
+  max-width: 520px;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transform: scale(0.96) translateY(8px);
+  transition: transform var(--transition-normal);
+}
+
+.modal-backdrop.open .modal-window {
+  transform: scale(1) translateY(0);
+}
+
+/* Modal Header */
+.modal-header {
+  padding: var(--space-5) var(--space-6);
+  border-bottom: 1px solid var(--color-line);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  background-color: var(--color-paper);
+}
+
+.modal-title {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-ink);
+  margin: 0 0 2px 0;
+}
+
+.modal-subtitle {
+  font-size: 13px;
+  color: var(--color-ink-soft);
+  margin: 0;
+}
+
+.btn-modal-close {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--color-ink-faint);
+  font-size: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-modal-close:hover {
+  background-color: var(--color-surface-muted);
+  border-color: var(--color-line);
+  color: var(--color-ink);
+}
+
+/* Modal Body */
+.modal-body {
+  padding: var(--space-6);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* Key Metrics Bento */
+.metrics-bento {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-3);
+}
+
+.metric-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-control);
+  padding: var(--space-3) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.metric-card-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-ink-faint);
+}
+
+.metric-card-val {
+  font-family: var(--font-mono);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-ink);
+  letter-spacing: -0.03em;
+}
+
+.metric-card-val.success-highlight {
+  color: var(--color-success);
+}
+
+.metric-card-sub {
+  font-size: 11px;
+  color: var(--color-ink-faint);
+}
+
+/* Sections in Modal */
+.metrics-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.metrics-section-title {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-ink-soft);
+}
+
+/* Platform Breakdown List */
+.platform-metrics-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.platform-metric-item {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-control);
+  padding: var(--space-3) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.platform-metric-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.platform-metric-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.platform-metric-count {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.platform-metric-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.platform-metric-duration {
+  color: var(--color-ink-soft);
+}
+
+.platform-metric-pct {
+  color: var(--color-ink-faint);
+  font-weight: 600;
+}
+
+/* Platform Progress Fill */
+.platform-progress-bg {
+  width: 100%;
+  height: 6px;
+  background-color: var(--color-surface-muted);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.platform-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.platform-progress-fill.yt {
+  background-color: var(--color-accent);
+}
+
+.platform-progress-fill.tt {
+  background-color: #0E746C;
+}
+
+.platform-progress-fill.ig {
+  background-color: #AD2B60;
+}
+
+/* Format Chips */
+.format-chips-wrap {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-2);
+}
+
+.format-chip {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-control);
+  padding: var(--space-2) var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.format-chip-label {
+  font-size: 11px;
+  color: var(--color-ink-soft);
+}
+
+.format-chip-val {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-ink);
+}
+
+/* Modal Footer */
+.modal-footer {
+  padding: var(--space-4) var(--space-6);
+  border-top: 1px solid var(--color-line);
+  background-color: var(--color-paper);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.metrics-updated-text {
+  font-size: 12px;
+  color: var(--color-ink-faint);
+  font-family: var(--font-mono);
+}
+
+.btn-metrics-refresh {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: 6px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-ink-soft);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-metrics-refresh:hover {
+  background-color: #FFFFFF;
+  border-color: var(--color-line-strong);
+  color: var(--color-ink);
+}
+
+@media (max-width: 520px) {
+  .metrics-bento {
+    grid-template-columns: 1fr;
+  }
+  .format-chips-wrap {
+    grid-template-columns: 1fr;
+  }
 }

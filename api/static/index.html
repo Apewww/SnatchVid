@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SnatchVid — Local Media Utility</title>
+  <title>SnatchVid</title>
 
   <!-- Brand Icons & Favicon -->
   <link rel="icon" type="image/svg+xml" href="/static/assets/snatchvid-icon.svg">
@@ -13,16 +14,19 @@
   <!-- Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
 
   <!-- Modular Stylesheet -->
   <link rel="stylesheet" href="/static/css/style.css">
 </head>
+
 <body>
 
   <!-- Quiet Utility Shell -->
   <main class="app-shell" role="region" aria-label="SnatchVid local media utility workbench">
-    
+
     <!-- Header -->
     <header class="header">
       <div class="window-controls" aria-hidden="true">
@@ -34,8 +38,9 @@
         <div class="brand-left">
           <div class="brand-logo-wrap" aria-hidden="true">
             <svg class="brand-logo-svg" viewBox="0 0 1024 1024" role="img" aria-label="SnatchVid icon">
-              <path fill="#C8553D" d="M256 144h512c35.346 0 64 28.654 64 64v192H578c-36.451 0-66 29.549-66 66v96c0 36.451 29.549 66 66 66h254v192c0 35.346-28.654 64-64 64H256c-35.346 0-64-28.654-64-64V208c0-35.346 28.654-64 64-64Z"/>
-              <rect x="594" y="438" width="194" height="148" rx="24" fill="#171714"/>
+              <path fill="#C8553D"
+                d="M256 144h512c35.346 0 64 28.654 64 64v192H578c-36.451 0-66 29.549-66 66v96c0 36.451 29.549 66 66 66h254v192c0 35.346-28.654 64-64 64H256c-35.346 0-64-28.654-64-64V208c0-35.346 28.654-64 64-64Z" />
+              <rect x="594" y="438" width="194" height="148" rx="24" fill="#171714" />
             </svg>
           </div>
           <a href="#app" id="brandHomeLink" class="wordmark">SnatchVid</a>
@@ -49,6 +54,13 @@
             <button id="navTabApp" class="nav-btn active" type="button" data-i18n="navApp">App</button>
             <button id="navTabAbout" class="nav-btn" type="button" data-i18n="navAbout">About</button>
           </nav>
+
+          <!-- Metrics Trigger Chip -->
+          <button id="btnMetricsTrigger" class="metrics-trigger-btn" type="button" title="View usage statistics"
+            aria-label="View usage statistics">
+            <span class="metrics-pulse-dot" aria-hidden="true"></span>
+            <span id="metricsHeaderBadge">0 downloads</span>
+          </button>
 
           <!-- Language Selector (EN / ID) -->
           <div class="lang-switcher" aria-label="Language selector">
@@ -71,24 +83,18 @@
         <!-- Product Promise -->
         <section class="promise-section">
           <h1 class="promise-headline" data-i18n="promiseHeadline">Paste a link. Get the file.</h1>
-          <p class="promise-subtext" data-i18n="promiseSubtext">Download videos from YouTube, TikTok, and Instagram — quickly and locally.</p>
+          <p class="promise-subtext" data-i18n="promiseSubtext">Download videos from YouTube, TikTok, and Instagram —
+            quickly and locally.</p>
         </section>
 
         <!-- URL Input Field -->
         <section class="input-section">
           <label for="videoUrl" class="field-label" data-i18n="fieldLabelUrl">Video URL</label>
           <div class="url-field-wrap">
-            <input
-              id="videoUrl"
-              class="url-input"
-              type="url"
-              placeholder="Paste a YouTube, TikTok, or Instagram link"
-              data-i18n-placeholder="urlPlaceholder"
-              autocomplete="off"
-              spellcheck="false"
-            >
+            <input id="videoUrl" class="url-input" type="url" placeholder="Paste a YouTube, TikTok, or Instagram link"
+              data-i18n-placeholder="urlPlaceholder" autocomplete="off" spellcheck="false">
             <button id="btnClear" class="btn-clear" type="button" title="Clear input" aria-label="Clear URL">✕</button>
-            
+
             <!-- Desktop Platform Detected Pill -->
             <div id="platformPillDesktop" class="platform-pill platform-pill-desktop" aria-live="polite"></div>
           </div>
@@ -168,7 +174,8 @@
         <!-- Action: Download Video -->
         <section id="downloadSection" class="download-section">
           <button id="btnDownload" class="btn-primary" type="button">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
               <polyline points="7 10 12 15 17 10"></polyline>
               <line x1="12" y1="15" x2="12" y2="3"></line>
@@ -184,7 +191,8 @@
         <div id="successCard" class="success-card" role="status">
           <div class="success-content">
             <span class="success-badge">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <polyline points="20 6 9 17 4 12"></polyline>
               </svg>
               <span data-i18n="successTitle">Downloaded successfully</span>
@@ -192,7 +200,8 @@
             <span id="successFilename" class="success-filename">video.mp4</span>
             <span id="successSize" class="success-meta">0.0 MB saved</span>
           </div>
-          <button id="btnDownloadAnother" class="btn-secondary" type="button" data-i18n="btnDownloadAnother">Download another</button>
+          <button id="btnDownloadAnother" class="btn-secondary" type="button" data-i18n="btnDownloadAnother">Download
+            another</button>
         </div>
       </div>
 
@@ -205,7 +214,11 @@
           <div class="about-header-group">
             <h1 class="about-title" data-i18n="aboutTitle">About SnatchVid</h1>
             <p class="about-lead" data-i18n="aboutLead">
-              SnatchVid is a high-speed, local-first media utility engineered by <strong>Rafly (<a href="https://github.com/Apewww" target="_blank" rel="noopener noreferrer" class="credit-link">Stellochron / Apewww</a>)</strong> to inspect, extract, and convert online media from YouTube, TikTok, and Instagram cleanly and locally without third-party advertisements, tracking, or cloud lock-in.
+              SnatchVid is a high-speed, local-first media utility engineered by <strong>Rafly (<a
+                  href="https://github.com/Apewww" target="_blank" rel="noopener noreferrer"
+                  class="credit-link">Stellochron / Apewww</a>)</strong> to inspect, extract, and convert online media
+              from YouTube, TikTok, and Instagram cleanly and locally without third-party advertisements, tracking, or
+              cloud lock-in.
             </p>
 
             <!-- Developer Portfolio & GitHub Links -->
@@ -227,32 +240,38 @@
             <div class="pillars-grid">
               <div class="pillar-card">
                 <div class="pillar-title" data-i18n="pillar1Title">100% Free Forever</div>
-                <div class="pillar-desc" data-i18n="pillar1Desc">Enjoy unlimited video downloads without subscriptions, token fees, or hidden paywalls.</div>
+                <div class="pillar-desc" data-i18n="pillar1Desc">Enjoy unlimited video downloads without subscriptions,
+                  token fees, or hidden paywalls.</div>
               </div>
 
               <div class="pillar-card">
                 <div class="pillar-title" data-i18n="pillar2Title">Local & Fast Processing</div>
-                <div class="pillar-desc" data-i18n="pillar2Desc">Powered by yt-dlp & ffmpeg. Media files are merged and converted directly on your machine without third-party proxies.</div>
+                <div class="pillar-desc" data-i18n="pillar2Desc">Powered by yt-dlp & ffmpeg. Media files are merged and
+                  converted directly on your machine without third-party proxies.</div>
               </div>
 
               <div class="pillar-card">
                 <div class="pillar-title" data-i18n="pillar3Title">No Account or Sign-Up</div>
-                <div class="pillar-desc" data-i18n="pillar3Desc">No logins, cookies, or email registration required. Simply paste the link and download directly.</div>
+                <div class="pillar-desc" data-i18n="pillar3Desc">No logins, cookies, or email registration required.
+                  Simply paste the link and download directly.</div>
               </div>
 
               <div class="pillar-card">
                 <div class="pillar-title" data-i18n="pillar4Title">Flexible Formats</div>
-                <div class="pillar-desc" data-i18n="pillar4Desc">Get original source quality (up to 1080p DASH), extracted MP3 audio, or 9:16 portrait video ready for WhatsApp Status.</div>
+                <div class="pillar-desc" data-i18n="pillar4Desc">Get original source quality (up to 1080p DASH),
+                  extracted MP3 audio, or 9:16 portrait video ready for WhatsApp Status.</div>
               </div>
 
               <div class="pillar-card">
                 <div class="pillar-title" data-i18n="pillar5Title">Multi-Platform Engine</div>
-                <div class="pillar-desc" data-i18n="pillar5Desc">Seamlessly inspect and download content from YouTube, TikTok (watermark-free 720p), and Instagram Reels.</div>
+                <div class="pillar-desc" data-i18n="pillar5Desc">Seamlessly inspect and download content from YouTube,
+                  TikTok (watermark-free 720p), and Instagram Reels.</div>
               </div>
 
               <div class="pillar-card">
                 <div class="pillar-title" data-i18n="pillar6Title">Ad-Free & Safe</div>
-                <div class="pillar-desc" data-i18n="pillar6Desc">Zero intrusive pop-unders, telemetry trackers, or deceptive buttons. Purely fast and transparent.</div>
+                <div class="pillar-desc" data-i18n="pillar6Desc">Zero intrusive pop-unders, telemetry trackers, or
+                  deceptive buttons. Purely fast and transparent.</div>
               </div>
             </div>
           </section>
@@ -265,7 +284,8 @@
                 <div class="step-num">1</div>
                 <div class="step-body">
                   <div class="step-title" data-i18n="step1Title">Copy Video URL</div>
-                  <div class="step-text" data-i18n="step1Desc">Browse to YouTube, TikTok, or Instagram and copy the video URL from your browser address bar or share sheet.</div>
+                  <div class="step-text" data-i18n="step1Desc">Browse to YouTube, TikTok, or Instagram and copy the
+                    video URL from your browser address bar or share sheet.</div>
                 </div>
               </div>
 
@@ -273,7 +293,8 @@
                 <div class="step-num">2</div>
                 <div class="step-body">
                   <div class="step-title" data-i18n="step2Title">Paste & Inspect</div>
-                  <div class="step-text" data-i18n="step2Desc">Paste the link into the SnatchVid input bar and click "Inspect link" to retrieve verified video metadata.</div>
+                  <div class="step-text" data-i18n="step2Desc">Paste the link into the SnatchVid input bar and click
+                    "Inspect link" to retrieve verified video metadata.</div>
                 </div>
               </div>
 
@@ -281,7 +302,8 @@
                 <div class="step-num">3</div>
                 <div class="step-body">
                   <div class="step-title" data-i18n="step3Title">Select Quality & Save</div>
-                  <div class="step-text" data-i18n="step3Desc">Choose your desired resolution or output format (Original, WhatsApp Status, or MP3) and click "Download video".</div>
+                  <div class="step-text" data-i18n="step3Desc">Choose your desired resolution or output format
+                    (Original, WhatsApp Status, or MP3) and click "Download video".</div>
                 </div>
               </div>
             </div>
@@ -297,14 +319,136 @@
           <span class="footer-platforms" data-i18n="footerPlatforms">Supports YouTube, TikTok, Instagram</span>
         </div>
         <div class="footer-right">
-          <span>Credit: <a href="https://github.com/Apewww" target="_blank" rel="noopener noreferrer" class="credit-link">Stellochron (Apewww)</a></span>
+          <span>Credit: <a href="https://github.com/Apewww" target="_blank" rel="noopener noreferrer"
+              class="credit-link">Stellochron (Apewww)</a></span>
         </div>
       </footer>
 
     </div>
   </main>
 
+  <!-- Metrics Detail Modal Dialog -->
+  <div id="metricsModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="metricsModalTitle"
+    hidden>
+    <div class="modal-window">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <div class="modal-header-text">
+          <h2 id="metricsModalTitle" class="modal-title" data-i18n="metricsModalTitle">Usage Metrics</h2>
+          <p class="modal-subtitle" data-i18n="metricsModalSubtitle">Real-time local processing & download statistics
+          </p>
+        </div>
+        <button id="btnMetricsClose" class="btn-modal-close" type="button" aria-label="Close modal">✕</button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body">
+        <!-- Key Metrics Cards -->
+        <div class="metrics-bento">
+          <div class="metric-card">
+            <div class="metric-card-label" data-i18n="metricTotalDownloads">Total Downloads</div>
+            <div id="metricValDownloads" class="metric-card-val">0</div>
+            <div id="metricSubInspections" class="metric-card-sub">0 inspected</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-card-label" data-i18n="metricSuccessRate">Success Rate</div>
+            <div id="metricValSuccessRate" class="metric-card-val success-highlight">100%</div>
+            <div id="metricSubFailures" class="metric-card-sub">0 failed</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-card-label" data-i18n="metricTotalDuration">Total Duration</div>
+            <div id="metricValDuration" class="metric-card-val">0 sec</div>
+            <div class="metric-card-sub" data-i18n="metricMediaProcessed">Media processed</div>
+          </div>
+        </div>
+
+        <!-- Platform Breakdown Section -->
+        <div class="metrics-section">
+          <div class="metrics-section-title" data-i18n="metricsPlatformBreakdown">Platform Breakdown</div>
+          <div class="platform-metrics-list">
+            <!-- YouTube Row -->
+            <div class="platform-metric-item">
+              <div class="platform-metric-header">
+                <div class="platform-metric-left">
+                  <span class="platform-tag youtube">▶ YouTube</span>
+                  <span id="metricYTCount" class="platform-metric-count">0 downloads</span>
+                </div>
+                <div class="platform-metric-right">
+                  <span id="metricYTDur" class="platform-metric-duration">0 sec</span>
+                  <span id="metricYTPct" class="platform-metric-pct">0%</span>
+                </div>
+              </div>
+              <div class="platform-progress-bg">
+                <div id="metricYTBar" class="platform-progress-fill yt" style="width: 0%"></div>
+              </div>
+            </div>
+
+            <!-- TikTok Row -->
+            <div class="platform-metric-item">
+              <div class="platform-metric-header">
+                <div class="platform-metric-left">
+                  <span class="platform-tag tiktok">🎵 TikTok</span>
+                  <span id="metricTTCount" class="platform-metric-count">0 downloads</span>
+                </div>
+                <div class="platform-metric-right">
+                  <span id="metricTTDur" class="platform-metric-duration">0 sec</span>
+                  <span id="metricTTPct" class="platform-metric-pct">0%</span>
+                </div>
+              </div>
+              <div class="platform-progress-bg">
+                <div id="metricTTBar" class="platform-progress-fill tt" style="width: 0%"></div>
+              </div>
+            </div>
+
+            <!-- Instagram Row -->
+            <div class="platform-metric-item">
+              <div class="platform-metric-header">
+                <div class="platform-metric-left">
+                  <span class="platform-tag instagram">📸 Instagram</span>
+                  <span id="metricIGCount" class="platform-metric-count">0 downloads</span>
+                </div>
+                <div class="platform-metric-right">
+                  <span id="metricIGDur" class="platform-metric-duration">0 sec</span>
+                  <span id="metricIGPct" class="platform-metric-pct">0%</span>
+                </div>
+              </div>
+              <div class="platform-progress-bg">
+                <div id="metricIGBar" class="platform-progress-fill ig" style="width: 0%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Format Breakdown Summary -->
+        <div class="metrics-section">
+          <div class="metrics-section-title" data-i18n="metricsFormatBreakdown">Formats Distributed</div>
+          <div class="format-chips-wrap">
+            <div class="format-chip">
+              <span class="format-chip-label" data-i18n="optOriginal">Original</span>
+              <span id="metricFmtOriginal" class="format-chip-val">0</span>
+            </div>
+            <div class="format-chip">
+              <span class="format-chip-label" data-i18n="optWhatsApp">WhatsApp Status</span>
+              <span id="metricFmtWA" class="format-chip-val">0</span>
+            </div>
+            <div class="format-chip">
+              <span class="format-chip-label" data-i18n="optMp3">MP3 Audio</span>
+              <span id="metricFmtMP3" class="format-chip-val">0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer">
+        <span id="metricsLastUpdated" class="metrics-updated-text">Updated: just now</span>
+        <button id="btnMetricsRefresh" class="btn-metrics-refresh" type="button" data-i18n="btnRefresh">Refresh</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Modular Client Application Script -->
   <script src="/static/js/app.js" defer></script>
 </body>
+
 </html>

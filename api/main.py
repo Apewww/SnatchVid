@@ -15,11 +15,17 @@ import tempfile
 import uuid
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import Depends, FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.background import BackgroundTask
+
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
 
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
@@ -33,6 +39,12 @@ from core.downloader import (  # noqa: E402
     normalize_quality,
 )
 from core.convert import OUTPUT_TYPES  # noqa: E402
+from core.metrics import (  # noqa: E402
+    get_metrics_summary,
+    record_download,
+    record_inspection,
+)
+from core.ratelimit import rate_limit_dependency  # noqa: E402
 
 app = FastAPI(
     title="SnatchVid API",
@@ -96,10 +108,17 @@ def output_types():
     return OUTPUT_TYPES
 
 
-@app.get("/api/info")
+@app.get("/api/metrics")
+def api_metrics():
+    """Ambil ringkasan metrik penggunaan (platform breakdown, durasi, persentase)."""
+    return get_metrics_summary()
+
+
+@app.get("/api/info", dependencies=[Depends(rate_limit_dependency)])
 def api_info(url: str = Query(..., description="URL video")):
     """Ambil metadata video (title, durasi, thumbnail, resolusi)."""
-    if not detect_platform(url):
+    detected_p = detect_platform(url)
+    if not detected_p:
         raise HTTPException(400, detail="URL tidak didukung. Support: YouTube, TikTok, Instagram.")
     try:
         info = get_info(url)
@@ -107,6 +126,12 @@ def api_info(url: str = Query(..., description="URL video")):
         raise
     except Exception as e:
         raise HTTPException(422, detail=f"Gagal mengekstrak info: {e}")
+
+    # Catat statistik pemeriksaan
+    try:
+        record_inspection(info.platform)
+    except Exception:
+        pass
 
     return {
         "platform": info.platform,
@@ -127,7 +152,7 @@ def api_info(url: str = Query(..., description="URL video")):
     }
 
 
-@app.get("/api/download")
+@app.get("/api/download", dependencies=[Depends(rate_limit_dependency)])
 def api_download(
     url: str = Query(..., description="URL video"),
     quality: str = Query("best", description="Kualitas: 'best' atau tinggi piksel (misal 720, 1080, 1920)"),
@@ -135,7 +160,8 @@ def api_download(
     wa_duration: int = Query(30, description="Max durasi detik untuk wa_status (default 30)"),
 ):
     """Download video dan kirim sebagai file attachment."""
-    if not detect_platform(url):
+    detected_p = detect_platform(url)
+    if not detected_p:
         raise HTTPException(400, detail="URL tidak didukung. Support: YouTube, TikTok, Instagram.")
     try:
         quality = normalize_quality(quality)
@@ -156,8 +182,28 @@ def api_download(
             output_type=output,
             wa_duration=wa_duration,
         )
+        # Catat metrik download sukses
+        try:
+            record_download(
+                platform=result.get("platform", detected_p),
+                duration_sec=result.get("duration_sec", 0),
+                output_type=output,
+                success=True,
+            )
+        except Exception:
+            pass
     except Exception as e:
         _cleanup(job_dir)
+        # Catat metrik download gagal
+        try:
+            record_download(
+                platform=detected_p,
+                duration_sec=0,
+                output_type=output,
+                success=False,
+            )
+        except Exception:
+            pass
         raise HTTPException(422, detail=f"Download gagal: {e}")
 
     file_path = Path(result["path"])
