@@ -13,6 +13,8 @@ import re
 import shutil
 import sys
 import threading
+import time
+import urllib.parse
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Callable, Optional
@@ -73,12 +75,34 @@ def normalize_quality(quality: str | int) -> str:
     )
 
 
+def clean_url(url: str) -> str:
+    """Bersihkan tracking parameters dari URL (terutama parameter tracking TikTok & webapp)."""
+    try:
+        url_str = url.strip()
+        parsed = urllib.parse.urlparse(url_str)
+        if "tiktok.com" in parsed.netloc.lower():
+            # Hapus tracking query params (?is_from_webapp=1&sender_device=pc...)
+            return urllib.parse.urlunparse((parsed.scheme, parsed.netloc, parsed.path, "", "", ""))
+        return url_str
+    except Exception:
+        return url.strip()
+
+
 def detect_platform(url: str) -> Optional[str]:
     """Deteksi platform dari URL. Return key platform atau None."""
+    cleaned = clean_url(url)
     for key, conf in PLATFORMS.items():
-        if re.search(conf["regex"], url, re.IGNORECASE):
+        if re.search(conf["regex"], cleaned, re.IGNORECASE):
             return key
     return None
+
+
+class _QuietLogger:
+    """Peredam output internal yt-dlp agar error transient tidak bocor ke konsol saat retry."""
+    def debug(self, msg): pass
+    def info(self, msg): pass
+    def warning(self, msg): pass
+    def error(self, msg): pass
 
 
 def default_opts() -> dict:
@@ -87,9 +111,13 @@ def default_opts() -> dict:
         "quiet": True,
         "no_warnings": True,
         "noplaylist": True,          # jangan download playlist/auto-play
-        "retries": 3,
+        "logger": _QuietLogger(),
+        "retries": 5,                # retry transient network/HTTP errors
+        "fragment_retries": 10,      # retry dropped DASH chunks
+        "file_access_retries": 3,
         "socket_timeout": 30,
         "restrictfilenames": True,
+        "remote_components": ["ejs:github"],
     }
 
 
@@ -99,27 +127,32 @@ def ffmpeg_available() -> bool:
 
 
 def platform_opts(platform: str, quality: str = "720") -> dict:
-    """Opsi tambahan spesifik platform (hasil spike test)."""
+    """Opsi tambahan spesifik platform (hasil spike test & hardening)."""
     opts = default_opts()
 
     if platform == "youtube":
         # YouTube pakai DASH: video & audio terpisah → merge pakai ffmpeg.
-        # (download() sudah fast-fail kalau ffmpeg tidak ada.)
         if quality == "best":
             fmt = "bestvideo+bestaudio/best"
         else:
-            fmt = f"bestvideo[height<={quality}]+bestaudio/best[height<={quality}]"
+            fmt = f"bestvideo[height<={quality}]+bestaudio/best[height<={quality}]/best"
         opts.update({
             "format": fmt,
             "merge_output_format": "mp4",
-            "js_runtimes": {"node": {}},  # butuh node/deno buat extract format lengkap
+            "js_runtimes": {"node": {}},
+            "extractor_args": {
+                "youtube": {
+                    "player_client": ["web", "mweb", "android", "ios"]
+                }
+            },
             "outtmpl": "%(title).80s.%(ext)s",
         })
     elif platform == "tiktok":
+        # Gunakan impersonasi Chrome TLS langsung ke webpage challenge solver.
+        # Hindari app_info API JSON yang sering melempar 'rehydration data' error.
         opts.update({
-            "impersonate": ImpersonateTarget(client="chrome"),  # butuh curl_cffi terinstall
+            "impersonate": ImpersonateTarget(client="chrome"),
             "js_runtimes": {"node": {}},
-            "extractor_args": {"tiktok": {"app_info": ["com.ss.android.ugc.trill"]}},
             "outtmpl": "%(title).80s.%(ext)s",
         })
     elif platform == "instagram":
@@ -139,10 +172,73 @@ def platform_opts(platform: str, quality: str = "720") -> dict:
 # ---------------------------------------------------------------------------
 
 def _clean_title(info: dict) -> str:
-    """Judul yang aman buat nama file (potong kalau kepanjangan)."""
+    """Judul yang aman buat nama file (potong kalau kepanjangan dan hindari reserved windows names)."""
     title = info.get("title") or info.get("id") or "snatchvid"
-    safe = re.sub(r'[\\/:*?"<>|]', "_", title).strip()
-    return safe[:100] or "snatchvid"
+    safe = re.sub(r'[\x00-\x1f\x7f\\/:*?"<>|]', "_", str(title))
+    safe = re.sub(r'\s+', ' ', safe).strip(" .")
+    reserved = {"CON", "PRN", "AUX", "NUL", "COM1", "COM2", "COM3", "COM4",
+                "COM5", "COM6", "COM7", "COM8", "COM9", "LPT1", "LPT2",
+                "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9"}
+    if safe.upper() in reserved:
+        safe = f"{safe}_file"
+    return safe[:90].rstrip(" .") or "snatchvid"
+
+
+def _translate_error(err: Exception, platform: str) -> str:
+    """Ubah pesan error teknis menjadi pesan yang jelas dan informatif bagi user."""
+    msg = str(err)
+    lower = msg.lower()
+    if "sign in to confirm you're not a bot" in lower or "confirm your age" in lower:
+        return "YouTube memerlukan verifikasi login / anti-bot untuk video ini."
+    if "unable to extract universal data for rehydration" in lower or "bot detection" in lower:
+        return "TikTok membatasi akses sementara (rate limit / bot challenge). Silakan coba sesaat lagi."
+    if "please log in to access this content" in lower or "login required" in lower:
+        return "Instagram membatasi akses (konten privat atau butuh login akun)."
+    if "video unavailable" in lower or "this video has been removed" in lower or "private video" in lower:
+        pname = PLATFORMS.get(platform, {}).get("name", "ini")
+        return f"Video {pname} tidak tersedia (dihapus, privat, atau dibatasi wilayah)."
+    if "requested format is not available" in lower:
+        return "Format resolusi yang diminta tidak tersedia untuk video ini."
+    return msg
+
+
+def _extract_with_retry(
+    opts: dict,
+    url: str,
+    download: bool = False,
+    max_attempts: int = 3,
+    platform: str = "general"
+) -> tuple[dict, yt_dlp.YoutubeDL]:
+    """
+    Ekstrak metadata atau download dengan intelligent backoff retry.
+    Mencegah kegagalan seketika saat terjadi transient rate limit / edge challenge.
+    """
+    last_exc = None
+    delay = 1.5
+    for attempt in range(1, max_attempts + 1):
+        try:
+            ydl = yt_dlp.YoutubeDL(opts)
+            info = ydl.extract_info(url, download=download)
+            if info is not None:
+                return info, ydl
+        except yt_dlp.utils.DownloadError as e:
+            last_exc = e
+            msg = str(e).lower()
+            # Fast-fail jika error permanen (tidak ada gunanya di-retry)
+            if any(p in msg for p in ["video unavailable", "private video", "has been removed", "404", "requested format is not available"]):
+                raise RuntimeError(_translate_error(e, platform)) from e
+            if attempt < max_attempts:
+                time.sleep(delay)
+                delay *= 1.8
+        except Exception as e:
+            last_exc = e
+            if attempt < max_attempts:
+                time.sleep(delay)
+                delay *= 1.8
+
+    if last_exc:
+        raise RuntimeError(_translate_error(last_exc, platform)) from last_exc
+    raise RuntimeError("Gagal memproses video setelah beberapa kali percobaan.")
 
 
 def _fmt_duration(sec: Optional[float]) -> str:
@@ -189,6 +285,7 @@ _progress_lock = threading.Lock()
 
 def get_info(url: str, progress_hook: Optional[Callable] = None) -> MediaInfo:
     """Ambil metadata video tanpa mendownload."""
+    url = clean_url(url)
     platform = detect_platform(url)
     if not platform:
         raise ValueError(
@@ -199,11 +296,7 @@ def get_info(url: str, progress_hook: Optional[Callable] = None) -> MediaInfo:
     if progress_hook:
         opts["progress_hooks"] = [progress_hook]
 
-    with yt_dlp.YoutubeDL(opts) as ydl:
-        info = ydl.extract_info(url, download=False)
-
-    if info is None:
-        raise RuntimeError("Gagal mengekstrak info video.")
+    info, ydl = _extract_with_retry(opts, url, download=False, max_attempts=3, platform=platform)
 
     # List format & resolusi yang tersedia (untuk UI)
     formats = []
@@ -245,6 +338,7 @@ def download(
     - wa_duration: max detik untuk output_type="wa_status" (default 30 = batas status WA)
     - progress_hook: callback berformat yt-dlp (d, {status, downloaded_bytes, total_bytes, ...})
     """
+    url = clean_url(url)
     quality = normalize_quality(quality)
 
     platform = detect_platform(url)
@@ -284,35 +378,27 @@ def download(
     if progress_hook:
         opts["progress_hooks"] = [progress_hook]
 
-    with yt_dlp.YoutubeDL(opts) as ydl:
-        try:
-            info = ydl.extract_info(url, download=True)
-        except yt_dlp.utils.DownloadError as e:
-            msg = str(e)
-            # YouTube tanpa ffmpeg: video DASH-only nggak bisa single-file
-            if (
-                platform == "youtube"
-                and not ffmpeg_available()
-                and "Requested format is not available" in msg
-            ):
-                raise RuntimeError(
-                    "Video YouTube ini tidak memiliki format single-file (progressive), "
-                    "jadi butuh ffmpeg untuk menggabungkan video+audio. "
-                    "Install ffmpeg dulu lalu restart:\n"
-                    "  Windows: winget install ffmpeg\n"
-                    "  Linux  : sudo apt install ffmpeg"
-                )
-            raise
+    info, ydl = _extract_with_retry(opts, url, download=True, max_attempts=3, platform=platform)
 
-    if info is None:
-        raise RuntimeError("Download gagal: tidak ada info video.")
-
-    # Cari file hasil download (mungkin sudah di-merge jadi .mp4)
-    path = Path(str(ydl.prepare_filename(info)))
+    # Cari file hasil download (bisa .mp4, .mkv, .webm, atau nama hasil merge)
+    prep_path = Path(str(ydl.prepare_filename(info)))
+    path = prep_path
     if not path.exists():
-        # fallback: cari file terbaru di outdir
-        candidates = sorted(outdir.glob("*"), key=lambda p: p.stat().st_mtime, reverse=True)
-        path = candidates[0] if candidates else None
+        # Cek kemungkinan ekstensi lain yang umum (misal hasil merge jadi .mp4)
+        for cand_ext in [".mp4", ".mkv", ".webm", ".m4a", ".mp3"]:
+            cand = prep_path.with_suffix(cand_ext)
+            if cand.exists():
+                path = cand
+                break
+        else:
+            # Fallback: cari file non-temp terbaru di outdir
+            candidates = [
+                p for p in outdir.glob("*")
+                if not p.name.endswith((".part", ".ytdl", ".temp")) and p.is_file()
+            ]
+            candidates.sort(key=lambda p: p.stat().st_mtime, reverse=True)
+            path = candidates[0] if candidates else None
+
     if path is None or not path.exists():
         raise RuntimeError("Download selesai tapi file tidak ditemukan.")
 

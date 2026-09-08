@@ -743,8 +743,18 @@
         }
 
         const cd = res.headers.get('Content-Disposition') || '';
-        const match = cd.match(/filename="?([^";]+)"?/);
-        const fname = match ? match[1] : 'video.mp4';
+        let fname = 'video.mp4';
+        const starMatch = cd.match(/filename\*=(?:UTF-8''|utf-8'')([^;]+)/i);
+        if (starMatch) {
+          try {
+            fname = decodeURIComponent(starMatch[1].trim().replace(/^["']|["']$/g, ''));
+          } catch (e) {
+            fname = starMatch[1].trim().replace(/^["']|["']$/g, '');
+          }
+        } else {
+          const match = cd.match(/filename="?([^";]+)"?/);
+          if (match) fname = match[1];
+        }
 
         const blob = await res.blob();
         const downloadUrl = URL.createObjectURL(blob);

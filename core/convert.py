@@ -40,10 +40,24 @@ def _duration_sec(path: Path) -> float | None:
         return None
 
 
+def _has_audio(path: Path) -> bool:
+    """Cek apakah file media memiliki setidaknya 1 audio stream."""
+    try:
+        proc = subprocess.run(
+            ["ffprobe", "-v", "error", "-select_streams", "a",
+             "-show_entries", "stream=codec_type",
+             "-of", "default=noprint_wrappers=1:nokey=1", str(path)],
+            capture_output=True, text=True,
+        )
+        return bool(proc.stdout.strip())
+    except Exception:
+        return False
+
+
 def to_wa_status(src: str | Path, dst: str | Path, max_sec: int = 30) -> Path:
     """
     Re-encode ke format WhatsApp Status:
-      - H.264 (libx264) + AAC
+      - H.264 (libx264) + AAC (atau -an jika video tanpa audio)
       - Portrait 9:16 dengan letterbox (video landscape tetap muat)
       - Trim ke max_sec (default 30s — batas status WA)
       - faststart biar langsung bisa diputar
@@ -57,8 +71,11 @@ def to_wa_status(src: str | Path, dst: str | Path, max_sec: int = 30) -> Path:
     if dur is not None and dur > max_sec:
         trim = ["-t", str(max_sec)]
     elif dur is not None:
-        # biar pas di detik, tetap potong presisi
         trim = ["-t", str(max_sec)]
+
+    # Jika video bisu (tidak punya stream audio), gunakan -an agar ffmpeg tidak error
+    has_audio = _has_audio(src_p)
+    audio_args = ["-c:a", "aac", "-b:a", "128k"] if has_audio else ["-an"]
 
     args = [
         "-i", str(src_p),
@@ -68,7 +85,7 @@ def to_wa_status(src: str | Path, dst: str | Path, max_sec: int = 30) -> Path:
         "pad=1080:1920:(ow-iw)/2:(oh-ih)/2",
         "-c:v", "libx264", "-preset", "medium", "-crf", "23",
         "-pix_fmt", "yuv420p",
-        "-c:a", "aac", "-b:a", "128k",
+        *audio_args,
         "-movflags", "+faststart",
         str(dst_p),
     ]
@@ -81,6 +98,9 @@ def to_mp3(src: str | Path, dst: str | Path, bitrate: int = 192) -> Path:
     src_p, dst_p = Path(src), Path(dst)
     if not dst_p.suffix:
         dst_p = dst_p.with_suffix(".mp3")
+
+    if not _has_audio(src_p):
+        raise ValueError("Video ini tidak memiliki audio track (video bisu), sehingga tidak dapat dikonversi ke MP3.")
 
     args = [
         "-i", str(src_p),
