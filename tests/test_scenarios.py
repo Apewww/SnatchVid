@@ -90,9 +90,18 @@ def test_default_opts():
     assert "android" in yt_opts["extractor_args"]["youtube"]["player_client"]
     print("TEST 4 PASSED")
 
+
+def test_env_config():
+    print("\n=== TEST 5: Environment Variables (.env) ===")
+    from api.main import ROOT_DIR, ENV_FILE
+    assert ROOT_DIR.exists()
+    assert ENV_FILE.name == ".env"
+    print("TEST 5 PASSED")
+
 if __name__ == "__main__":
     test_windows_filename_sanitization()
     test_silent_video_conversion()
     test_friendly_error_translation()
     test_default_opts()
+    test_env_config()
     print("\nALL SCENARIOS VERIFIED SUCCESSFULLY!")

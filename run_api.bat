@@ -20,6 +20,11 @@ pause
 exit /b 1
 
 :RUN
-echo [*] Memulai SnatchVid Web Server di http://127.0.0.1:8000...
-echo [*] Tekan Ctrl+C untuk menghentikan server.
-python -m uvicorn api.main:app --host 0.0.0.0 --port 8000
+if not exist ".env" (
+    if exist ".env.example" (
+        copy ".env.example" ".env" >nul
+        echo [*] File .env belum ada. Dibuat otomatis dari .env.example.
+    )
+)
+
+python -m api.main %*

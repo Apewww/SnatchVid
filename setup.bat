@@ -49,6 +49,13 @@ if errorlevel 1 (
 ) else (
     echo [OK] Semua dependensi Python berhasil dipasang di .venv.
 )
+
+if not exist ".env" (
+    if exist ".env.example" (
+        copy ".env.example" ".env" >nul
+        echo [OK] File .env berhasil disiapkan dari .env.example.
+    )
+)
 goto :CHECK_FFMPEG
 
 :CHECK_FFMPEG

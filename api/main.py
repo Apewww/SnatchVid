@@ -21,14 +21,35 @@ from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.background import BackgroundTask
 
+import sys
+from pathlib import Path
+
+ROOT_DIR = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT_DIR))
+
+ENV_FILE = ROOT_DIR / ".env"
 try:
     from dotenv import load_dotenv
-    load_dotenv()
+    if ENV_FILE.is_file():
+        load_dotenv(dotenv_path=ENV_FILE)
+    else:
+        load_dotenv()
 except ImportError:
-    pass
-
-import sys
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+    # Fallback parser sederhana jika python-dotenv belum terpasang
+    if ENV_FILE.is_file():
+        try:
+            with open(ENV_FILE, "r", encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if not line or line.startswith("#") or "=" not in line:
+                        continue
+                    k, v = line.split("=", 1)
+                    k = k.strip()
+                    v = v.strip().strip("'\"")
+                    if k and k not in os.environ:
+                        os.environ[k] = v
+        except Exception:
+            pass
 
 from core.downloader import (  # noqa: E402
     PLATFORMS,
@@ -234,5 +255,26 @@ if STATIC_DIR.exists() and any(STATIC_DIR.iterdir()):
 
 
 if __name__ == "__main__":
+    import argparse
     import uvicorn
-    uvicorn.run("api.main:app", host="0.0.0.0", port=8000, reload=True)
+
+    default_host = os.getenv("HOST", "0.0.0.0").strip() or "0.0.0.0"
+    default_port_str = os.getenv("PORT", "8000").strip()
+    try:
+        default_port = int(default_port_str)
+    except ValueError:
+        default_port = 8000
+
+    parser = argparse.ArgumentParser(description="SnatchVid Web API Server")
+    parser.add_argument("--host", default=default_host, help=f"Host to bind (default: {default_host})")
+    parser.add_argument("--port", type=int, default=default_port, help=f"Port to bind (default: {default_port})")
+    parser.add_argument("--reload", action="store_true", default=True, help="Enable auto-reload (default: True)")
+    parser.add_argument("--no-reload", action="store_false", dest="reload", help="Disable auto-reload")
+
+    args, _ = parser.parse_known_args()
+
+    display_host = "127.0.0.1" if args.host in ("0.0.0.0", "") else args.host
+    print(f"[*] Memulai SnatchVid Web Server di http://{display_host}:{args.port}...")
+    print("[*] Tekan Ctrl+C untuk menghentikan server.\n")
+
+    uvicorn.run("api.main:app", host=args.host, port=args.port, reload=args.reload)
