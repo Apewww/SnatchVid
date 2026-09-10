@@ -352,6 +352,17 @@ body {
   user-select: none;
 }
 
+.platform-pill .pill-icon-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.platform-pill .brand-icon {
+  width: 14px;
+  height: 14px;
+}
+
 .platform-pill.youtube {
   background-color: var(--color-yt-bg);
   color: var(--color-yt-text);
@@ -520,10 +531,15 @@ body {
 .platform-display-tag {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   font-size: 12.5px;
   font-weight: 600;
   margin-bottom: var(--space-1);
+}
+
+.platform-display-tag .brand-icon {
+  width: 14px;
+  height: 14px;
 }
 
 .platform-display-tag.youtube { color: var(--color-yt-text); }
@@ -1408,13 +1424,28 @@ body {
   background-color: #1877F2;
 }
 
+/* Authentic Brand SVG Icons */
+.brand-icon {
+  display: inline-block;
+  vertical-align: middle;
+  flex-shrink: 0;
+  width: 15px;
+  height: 15px;
+}
+
 .platform-tag {
   font-size: 13px;
   font-weight: 600;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
 }
+
+.platform-tag .brand-icon {
+  width: 15px;
+  height: 15px;
+}
+
 .platform-tag.youtube { color: var(--color-yt-text); }
 .platform-tag.tiktok { color: var(--color-tt-text); }
 .platform-tag.instagram { color: var(--color-ig-text); }
