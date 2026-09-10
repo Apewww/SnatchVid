@@ -27,6 +27,8 @@ DEFAULT_METRICS: Dict[str, Any] = {
         "youtube": {"inspected": 0, "downloaded": 0, "duration_sec": 0, "errors": 0},
         "tiktok": {"inspected": 0, "downloaded": 0, "duration_sec": 0, "errors": 0},
         "instagram": {"inspected": 0, "downloaded": 0, "duration_sec": 0, "errors": 0},
+        "twitter": {"inspected": 0, "downloaded": 0, "duration_sec": 0, "errors": 0},
+        "facebook": {"inspected": 0, "downloaded": 0, "duration_sec": 0, "errors": 0},
     },
     "formats": {
         "original": 0,
@@ -48,7 +50,7 @@ def _load_metrics() -> Dict[str, Any]:
             for key, val in DEFAULT_METRICS.items():
                 if key not in data:
                     data[key] = json.loads(json.dumps(val))
-            for p in ["youtube", "tiktok", "instagram"]:
+            for p in ["youtube", "tiktok", "instagram", "twitter", "facebook"]:
                 if p not in data.get("platforms", {}):
                     data.setdefault("platforms", {})[p] = {"inspected": 0, "downloaded": 0, "duration_sec": 0, "errors": 0}
             for fmt in ["original", "wa_status", "mp3"]:

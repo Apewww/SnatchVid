@@ -98,10 +98,49 @@ def test_env_config():
     assert ENV_FILE.name == ".env"
     print("TEST 5 PASSED")
 
+def test_twitter_facebook_support():
+    print("\n=== TEST 6: Twitter / X & Facebook Platform Support ===")
+    import core.metrics as mt
+
+    # 1. URL Detection
+    assert dl.detect_platform("https://twitter.com/OpenAI/status/123456789") == "twitter"
+    assert dl.detect_platform("https://x.com/elonmusk/status/987654321") == "twitter"
+    assert dl.detect_platform("https://www.facebook.com/reel/1234567890") == "facebook"
+    assert dl.detect_platform("https://fb.watch/nXYZ12345/") == "facebook"
+    assert dl.detect_platform("https://www.facebook.com/watch/?v=123456789") == "facebook"
+    print("URL Detection: PASSED")
+
+    # 2. Platform Opts
+    tw_opts = dl.platform_opts("twitter", quality="720")
+    fb_opts = dl.platform_opts("facebook", quality="1080")
+    assert tw_opts.get("merge_output_format") == "mp4"
+    assert fb_opts.get("merge_output_format") == "mp4"
+    assert "height<=720" in tw_opts.get("format", "")
+    assert "height<=1080" in fb_opts.get("format", "")
+    print("Platform Opts: PASSED")
+
+    # 3. Error Translation
+    e_tw = RuntimeError("This tweet is from a private account.")
+    e_fb = RuntimeError("You must log in to continue.")
+    msg_tw = dl._translate_error(e_tw, "twitter")
+    msg_fb = dl._translate_error(e_fb, "facebook")
+    assert "Twitter / X membatasi akses" in msg_tw
+    assert "Facebook membatasi akses" in msg_fb
+    print("Error Translation: PASSED")
+
+    # 4. Metrics Schema
+    metrics = mt.get_metrics_summary()
+    assert "twitter" in metrics.get("platforms", {})
+    assert "facebook" in metrics.get("platforms", {})
+    print("Metrics Platforms: PASSED")
+    print("TEST 6 PASSED")
+
+
 if __name__ == "__main__":
     test_windows_filename_sanitization()
     test_silent_video_conversion()
     test_friendly_error_translation()
     test_default_opts()
     test_env_config()
+    test_twitter_facebook_support()
     print("\nALL SCENARIOS VERIFIED SUCCESSFULLY!")

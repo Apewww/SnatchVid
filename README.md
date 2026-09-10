@@ -1,6 +1,6 @@
 # ⚡ SnatchVid
 
-Download video dari **TikTok**, **Instagram**, dan **YouTube** — 2 versi: **CLI** & **API + Frontend demo**.
+Download video dari **YouTube**, **TikTok**, **Instagram**, **Twitter / X**, dan **Facebook** — 2 versi: **CLI** & **API + Frontend demo**.
 
 > Demo build oleh RaflyLabs. Untuk penggunaan pribadi / konten sendiri.
 
@@ -11,6 +11,8 @@ Download video dari **TikTok**, **Instagram**, dan **YouTube** — 2 versi: **CL
 | YouTube   | ✅ | Merge DASH (video+audio) via ffmpeg, pilih kualitas 360–1080p |
 | TikTok    | ✅ | Impersonation + extractor args (tanpa watermark untuk format 720p) |
 | Instagram | ✅ | Reels & feed video |
+| Twitter / X | ✅ | Video tweet publik MP4 berbagai bitrate & resolusi |
+| Facebook  | ✅ | Reels & video publik (SD/HD & DASH merge) |
 
 ## 📁 Struktur
 
@@ -97,8 +99,10 @@ Semua lewat **yt-dlp** dengan flag yang sudah diuji:
 | Platform | Flag khusus |
 |----------|-------------|
 | YouTube | `-f "bestvideo[height<=Q]+bestaudio" --merge-output-format mp4` + `--js-runtimes node` |
-| TikTok | `--impersonate chrome --extractor-args "tiktok:app_info=com.ss.android.ugc.trill"` |
+| TikTok | `--impersonate chrome` |
 | Instagram | `--impersonate chrome --js-runtimes node` |
+| Twitter / X | `--impersonate chrome --merge-output-format mp4` |
+| Facebook | `--impersonate chrome --merge-output-format mp4` |
 
 - **curl_cffi** wajib terinstall (dipakai `--impersonate`).
 - TikTok/IG paling rapuh terhadap perubahan platform — kalau error, update yt-dlp: `pip install -U yt-dlp`.

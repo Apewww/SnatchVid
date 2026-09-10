@@ -25,6 +25,10 @@
   --color-tt-text: #0E746C;
   --color-ig-bg: #F8EBF0;
   --color-ig-text: #AD2B60;
+  --color-tw-bg: #E8F5FD;
+  --color-tw-text: #1D9BF0;
+  --color-fb-bg: #E7F0FD;
+  --color-fb-text: #1877F2;
 
   /* Spacing & Metrics */
   --shell-max: 1120px;
@@ -363,6 +367,16 @@ body {
   color: var(--color-ig-text);
 }
 
+.platform-pill.twitter {
+  background-color: var(--color-tw-bg);
+  color: var(--color-tw-text);
+}
+
+.platform-pill.facebook {
+  background-color: var(--color-fb-bg);
+  color: var(--color-fb-text);
+}
+
 .platform-pill-desktop {
   display: none;
   margin-left: 6px;
@@ -515,6 +529,8 @@ body {
 .platform-display-tag.youtube { color: var(--color-yt-text); }
 .platform-display-tag.tiktok { color: var(--color-tt-text); }
 .platform-display-tag.instagram { color: var(--color-ig-text); }
+.platform-display-tag.twitter { color: var(--color-tw-text); }
+.platform-display-tag.facebook { color: var(--color-fb-text); }
 
 .video-title {
   font-size: 16.5px;
@@ -1383,6 +1399,27 @@ body {
 .platform-progress-fill.ig {
   background-color: #AD2B60;
 }
+
+.platform-progress-fill.tw {
+  background-color: #1D9BF0;
+}
+
+.platform-progress-fill.fb {
+  background-color: #1877F2;
+}
+
+.platform-tag {
+  font-size: 13px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.platform-tag.youtube { color: var(--color-yt-text); }
+.platform-tag.tiktok { color: var(--color-tt-text); }
+.platform-tag.instagram { color: var(--color-ig-text); }
+.platform-tag.twitter { color: var(--color-tw-text); }
+.platform-tag.facebook { color: var(--color-fb-text); }
 
 /* Format Chips */
 .format-chips-wrap {

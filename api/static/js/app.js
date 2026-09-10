@@ -10,9 +10,9 @@
       navApp: "App",
       navAbout: "About",
       promiseHeadline: "Paste a link. Get the file.",
-      promiseSubtext: "Download videos from YouTube, TikTok, and Instagram — quickly and locally.",
+      promiseSubtext: "Download videos from YouTube, TikTok, Instagram, Twitter/X, and Facebook — quickly and locally.",
       fieldLabelUrl: "Video URL",
-      urlPlaceholder: "Paste a YouTube, TikTok, or Instagram link",
+      urlPlaceholder: "Paste a YouTube, TikTok, Instagram, Twitter/X, or Facebook link",
       btnInspect: "Inspect link",
       btnInspecting: "Inspecting…",
       labelQuality: "Quality",
@@ -34,15 +34,15 @@
       statusFfmpegReady: "Ready · ffmpeg available",
       statusFfmpegLimited: "Limited · ffmpeg not installed",
       statusStandalone: "Ready · standalone utility",
-      footerPlatforms: "Supports YouTube, TikTok, Instagram",
-      errEmptyUrl: "Paste a YouTube, TikTok, or Instagram link to inspect.",
-      errUnsupportedUrl: "That link is not supported yet. Try YouTube, TikTok, or Instagram.",
+      footerPlatforms: "Supports YouTube, TikTok, Instagram, Twitter/X, Facebook",
+      errEmptyUrl: "Paste a YouTube, TikTok, Instagram, Twitter/X, or Facebook link to inspect.",
+      errUnsupportedUrl: "That link is not supported yet. Try YouTube, TikTok, Instagram, Twitter/X, or Facebook.",
       errTiktokRetry: "TikTok is taking a moment. Retrying the link… Check URL and try again.",
       errInspectFailed: "We couldn't read this link. Check the URL and try again.",
       errFfmpegMissing: "This format needs ffmpeg. Install it, then check again.",
       errDownloadFailed: "Download failed. Try again or choose Original output.",
       aboutTitle: "About SnatchVid",
-      aboutLead: "SnatchVid is a high-speed, local-first media utility engineered by <strong>Rafly (<a href=\"https://github.com/Apewww\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"credit-link\">Stellochron / Apewww</a>)</strong> to inspect, extract, and convert online media from YouTube, TikTok, and Instagram cleanly and locally without third-party advertisements, tracking, or cloud lock-in.",
+      aboutLead: "SnatchVid is a high-speed, local-first media utility engineered by <strong>Rafly (<a href=\"https://github.com/Apewww\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"credit-link\">Stellochron / Apewww</a>)</strong> to inspect, extract, and convert online media from YouTube, TikTok, Instagram, Twitter/X, and Facebook cleanly and locally without third-party advertisements, tracking, or cloud lock-in.",
       aboutPortfolioType: "Personal Portfolio",
       aboutGithubType: "Open Source GitHub",
       aboutWhyTitle: "Why Use SnatchVid?",
@@ -55,12 +55,12 @@
       pillar4Title: "Flexible Formats",
       pillar4Desc: "Get original source quality (up to 1080p DASH), extracted MP3 audio, or 9:16 portrait video ready for WhatsApp Status.",
       pillar5Title: "Multi-Platform Engine",
-      pillar5Desc: "Seamlessly inspect and download content from YouTube, TikTok (watermark-free 720p), and Instagram Reels.",
+      pillar5Desc: "Seamlessly inspect and download content from YouTube, TikTok, Instagram Reels, Twitter/X, and Facebook.",
       pillar6Title: "Ad-Free & Safe",
       pillar6Desc: "Zero intrusive pop-unders, telemetry trackers, or deceptive buttons. Purely fast and transparent.",
       aboutHowTitle: "How to Download Videos",
       step1Title: "Copy Video URL",
-      step1Desc: "Browse to YouTube, TikTok, or Instagram and copy the video URL from your browser address bar or share sheet.",
+      step1Desc: "Browse to YouTube, TikTok, Instagram, Twitter/X, or Facebook and copy the video URL from your browser address bar or share sheet.",
       step2Title: "Paste & Inspect",
       step2Desc: "Paste the link into the SnatchVid input bar and click \"Inspect link\" to retrieve verified video metadata.",
       step3Title: "Select Quality & Save",
@@ -84,9 +84,9 @@
       navApp: "Aplikasi",
       navAbout: "Tentang",
       promiseHeadline: "Tempel link. Dapatkan file.",
-      promiseSubtext: "Download video dari YouTube, TikTok, dan Instagram — cepat dan lokal.",
+      promiseSubtext: "Download video dari YouTube, TikTok, Instagram, Twitter/X, dan Facebook — cepat dan lokal.",
       fieldLabelUrl: "URL Video",
-      urlPlaceholder: "Tempel link YouTube, TikTok, atau Instagram",
+      urlPlaceholder: "Tempel link YouTube, TikTok, Instagram, Twitter/X, atau Facebook",
       btnInspect: "Periksa link",
       btnInspecting: "Memeriksa…",
       labelQuality: "Kualitas",
@@ -108,15 +108,15 @@
       statusFfmpegReady: "Siap · ffmpeg tersedia",
       statusFfmpegLimited: "Terbatas · ffmpeg belum terpasang",
       statusStandalone: "Siap · utilitas lokal",
-      footerPlatforms: "Mendukung YouTube, TikTok, Instagram",
-      errEmptyUrl: "Tempel link YouTube, TikTok, atau Instagram untuk diperiksa.",
-      errUnsupportedUrl: "Link tersebut belum didukung. Coba link YouTube, TikTok, atau Instagram.",
+      footerPlatforms: "Mendukung YouTube, TikTok, Instagram, Twitter/X, Facebook",
+      errEmptyUrl: "Tempel link YouTube, TikTok, Instagram, Twitter/X, atau Facebook untuk diperiksa.",
+      errUnsupportedUrl: "Link tersebut belum didukung. Coba link YouTube, TikTok, Instagram, Twitter/X, atau Facebook.",
       errTiktokRetry: "TikTok sedang memproses lambat. Mencoba kembali… Periksa URL dan coba lagi.",
       errInspectFailed: "Gagal membaca link ini. Periksa kembali URL dan coba lagi.",
       errFfmpegMissing: "Format ini memerlukan ffmpeg. Pasang ffmpeg terlebih dahulu, lalu coba lagi.",
       errDownloadFailed: "Download gagal. Coba lagi atau pilih output Original.",
       aboutTitle: "Tentang SnatchVid",
-      aboutLead: "SnatchVid adalah utilitas media lokal berkecepatan tinggi yang dirancang oleh <strong>Rafly (<a href=\"https://github.com/Apewww\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"credit-link\">Stellochron / Apewww</a>)</strong> untuk memeriksa, mengekstrak, dan mengonversi media dari YouTube, TikTok, dan Instagram secara bersih dan lokal tanpa iklan, pelacakan data, atau server pihak ketiga.",
+      aboutLead: "SnatchVid adalah utilitas media lokal berkecepatan tinggi yang dirancang oleh <strong>Rafly (<a href=\"https://github.com/Apewww\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"credit-link\">Stellochron / Apewww</a>)</strong> untuk memeriksa, mengekstrak, dan mengonversi media dari YouTube, TikTok, Instagram, Twitter/X, dan Facebook secara bersih dan lokal tanpa iklan, pelacakan data, atau server pihak ketiga.",
       aboutPortfolioType: "Portofolio Pribadi",
       aboutGithubType: "GitHub Open Source",
       aboutWhyTitle: "Mengapa Menggunakan SnatchVid?",
@@ -129,12 +129,12 @@
       pillar4Title: "Pilihan Format Fleksibel",
       pillar4Desc: "Dapatkan kualitas sumber asli (hingga 1080p DASH), audio MP3 murni, atau video portrait 9:16 siap Status WhatsApp.",
       pillar5Title: "Mesin Multi-Platform",
-      pillar5Desc: "Mendukung YouTube, TikTok (tanpa watermark format 720p), dan Instagram Reels secara andal.",
+      pillar5Desc: "Mendukung YouTube, TikTok, Instagram Reels, Twitter/X, dan Facebook secara andal.",
       pillar6Title: "Bebas Iklan & Aman",
       pillar6Desc: "Tanpa pop-under yang mengganggu, pelacak data, atau tombol palsu. Murni cepat dan aman.",
       aboutHowTitle: "Cara Download Video",
       step1Title: "Salin Link Video",
-      step1Desc: "Buka YouTube, TikTok, atau Instagram dan salin link video dari bilah alamat browser atau tombol bagikan.",
+      step1Desc: "Buka YouTube, TikTok, Instagram, Twitter/X, atau Facebook dan salin link video dari bilah alamat browser atau tombol bagikan.",
       step2Title: "Tempel & Periksa",
       step2Desc: "Tempel link ke kolom SnatchVid lalu klik \"Periksa link\" untuk mengambil metadata video terverifikasi.",
       step3Title: "Pilih Kualitas & Simpan",
@@ -223,6 +223,16 @@
   const metricIGPct = document.getElementById('metricIGPct');
   const metricIGBar = document.getElementById('metricIGBar');
 
+  const metricTWCount = document.getElementById('metricTWCount');
+  const metricTWDur = document.getElementById('metricTWDur');
+  const metricTWPct = document.getElementById('metricTWPct');
+  const metricTWBar = document.getElementById('metricTWBar');
+
+  const metricFBCount = document.getElementById('metricFBCount');
+  const metricFBDur = document.getElementById('metricFBDur');
+  const metricFBPct = document.getElementById('metricFBPct');
+  const metricFBBar = document.getElementById('metricFBBar');
+
   const metricFmtOriginal = document.getElementById('metricFmtOriginal');
   const metricFmtWA = document.getElementById('metricFmtWA');
   const metricFmtMP3 = document.getElementById('metricFmtMP3');
@@ -282,6 +292,18 @@
       cls: 'instagram',
       icon: '📸',
       detectedLabel: 'Instagram detected'
+    },
+    twitter: {
+      name: 'Twitter / X',
+      cls: 'twitter',
+      icon: '🐦',
+      detectedLabel: 'Twitter / X detected'
+    },
+    facebook: {
+      name: 'Facebook',
+      cls: 'facebook',
+      icon: '📘',
+      detectedLabel: 'Facebook detected'
     }
   };
 
@@ -338,6 +360,8 @@
     if (/youtube\.com|youtu\.be/i.test(url)) return 'youtube';
     if (/tiktok\.com/i.test(url)) return 'tiktok';
     if (/instagram\.com/i.test(url)) return 'instagram';
+    if (/twitter\.com|x\.com/i.test(url)) return 'twitter';
+    if (/facebook\.com|fb\.watch/i.test(url)) return 'facebook';
     return null;
   }
 
@@ -852,6 +876,20 @@
     if (metricIGDur) metricIGDur.textContent = ig.duration_formatted ? (ig.duration_formatted[currentLang] || ig.duration_formatted.en) : '0 sec';
     if (metricIGPct) metricIGPct.textContent = `${ig.share_percentage}%`;
     if (metricIGBar) metricIGBar.style.width = `${Math.min(100, ig.share_percentage)}%`;
+
+    // Twitter / X
+    const tw = p.twitter || { downloaded: 0, share_percentage: 0, duration_formatted: {} };
+    if (metricTWCount) metricTWCount.textContent = `${tw.downloaded} ${dict.metricsTriggerSuffix}`;
+    if (metricTWDur) metricTWDur.textContent = tw.duration_formatted ? (tw.duration_formatted[currentLang] || tw.duration_formatted.en) : '0 sec';
+    if (metricTWPct) metricTWPct.textContent = `${tw.share_percentage}%`;
+    if (metricTWBar) metricTWBar.style.width = `${Math.min(100, tw.share_percentage)}%`;
+
+    // Facebook
+    const fb = p.facebook || { downloaded: 0, share_percentage: 0, duration_formatted: {} };
+    if (metricFBCount) metricFBCount.textContent = `${fb.downloaded} ${dict.metricsTriggerSuffix}`;
+    if (metricFBDur) metricFBDur.textContent = fb.duration_formatted ? (fb.duration_formatted[currentLang] || fb.duration_formatted.en) : '0 sec';
+    if (metricFBPct) metricFBPct.textContent = `${fb.share_percentage}%`;
+    if (metricFBBar) metricFBBar.style.width = `${Math.min(100, fb.share_percentage)}%`;
 
     // Formats
     const fmts = data.formats || {};

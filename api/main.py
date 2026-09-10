@@ -69,7 +69,7 @@ from core.ratelimit import rate_limit_dependency  # noqa: E402
 
 app = FastAPI(
     title="SnatchVid API",
-    description="Download video dari TikTok, Instagram & YouTube — demo build.",
+    description="Download video dari YouTube, TikTok, Instagram, Twitter / X & Facebook — demo build.",
     version="0.1.0",
 )
 
@@ -140,7 +140,7 @@ def api_info(url: str = Query(..., description="URL video")):
     """Ambil metadata video (title, durasi, thumbnail, resolusi)."""
     detected_p = detect_platform(url)
     if not detected_p:
-        raise HTTPException(400, detail="URL tidak didukung. Support: YouTube, TikTok, Instagram.")
+        raise HTTPException(400, detail="URL tidak didukung. Support: YouTube, TikTok, Instagram, Twitter / X, Facebook.")
     try:
         info = get_info(url)
     except HTTPException:
@@ -183,7 +183,7 @@ def api_download(
     """Download video dan kirim sebagai file attachment."""
     detected_p = detect_platform(url)
     if not detected_p:
-        raise HTTPException(400, detail="URL tidak didukung. Support: YouTube, TikTok, Instagram.")
+        raise HTTPException(400, detail="URL tidak didukung. Support: YouTube, TikTok, Instagram, Twitter / X, Facebook.")
     try:
         quality = normalize_quality(quality)
     except ValueError as e:

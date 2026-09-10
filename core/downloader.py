@@ -49,6 +49,18 @@ PLATFORMS = {
         "color": "#E1306C",
         "regex": r"(instagram\.com)",
     },
+    "twitter": {
+        "name": "Twitter / X",
+        "emoji": "🐦",
+        "color": "#1DA1F2",
+        "regex": r"(twitter\.com|x\.com)",
+    },
+    "facebook": {
+        "name": "Facebook",
+        "emoji": "📘",
+        "color": "#1877F2",
+        "regex": r"(facebook\.com|fb\.watch)",
+    },
 }
 
 QUALITIES = ["360", "480", "720", "1080", "best"]
@@ -161,6 +173,28 @@ def platform_opts(platform: str, quality: str = "720") -> dict:
             "js_runtimes": {"node": {}},
             "outtmpl": "%(title).80s.%(ext)s",
         })
+    elif platform == "twitter":
+        if quality == "best":
+            fmt = "bestvideo+bestaudio/best"
+        else:
+            fmt = f"bestvideo[height<={quality}]+bestaudio/best[height<={quality}]/best"
+        opts.update({
+            "format": fmt,
+            "merge_output_format": "mp4",
+            "impersonate": ImpersonateTarget(client="chrome"),
+            "outtmpl": "%(title).80s.%(ext)s",
+        })
+    elif platform == "facebook":
+        if quality == "best":
+            fmt = "bestvideo+bestaudio/best"
+        else:
+            fmt = f"bestvideo[height<={quality}]+bestaudio/best[height<={quality}]/best"
+        opts.update({
+            "format": fmt,
+            "merge_output_format": "mp4",
+            "impersonate": ImpersonateTarget(client="chrome"),
+            "outtmpl": "%(title).80s.%(ext)s",
+        })
     else:
         opts["outtmpl"] = "%(title).80s.%(ext)s"
 
@@ -194,6 +228,10 @@ def _translate_error(err: Exception, platform: str) -> str:
         return "TikTok membatasi akses sementara (rate limit / bot challenge). Silakan coba sesaat lagi."
     if "please log in to access this content" in lower or "login required" in lower:
         return "Instagram membatasi akses (konten privat atau butuh login akun)."
+    if "this tweet is from a private account" in lower or "requires authentication" in lower or "this media is not available" in lower:
+        return "Twitter / X membatasi akses (tweet privat, sensitif, atau memerlukan login)."
+    if "you must log in to continue" in lower or "login to continue" in lower:
+        return "Facebook membatasi akses (video privat, grup tertutup, atau butuh login akun)."
     if "video unavailable" in lower or "this video has been removed" in lower or "private video" in lower:
         pname = PLATFORMS.get(platform, {}).get("name", "ini")
         return f"Video {pname} tidak tersedia (dihapus, privat, atau dibatasi wilayah)."
@@ -289,7 +327,7 @@ def get_info(url: str, progress_hook: Optional[Callable] = None) -> MediaInfo:
     platform = detect_platform(url)
     if not platform:
         raise ValueError(
-            "URL tidak didukung. Support: YouTube, TikTok, Instagram."
+            "URL tidak didukung. Support: YouTube, TikTok, Instagram, Twitter / X, Facebook."
         )
 
     opts = platform_opts(platform)
@@ -343,7 +381,7 @@ def download(
 
     platform = detect_platform(url)
     if not platform:
-        raise ValueError("URL tidak didukung. Support: YouTube, TikTok, Instagram.")
+        raise ValueError("URL tidak didukung. Support: YouTube, TikTok, Instagram, Twitter / X, Facebook.")
 
     # Validasi output_type & ffmpeg
     from core.convert import OUTPUT_TYPES, to_mp3, to_wa_status

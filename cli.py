@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-SnatchVid CLI — download video YouTube/TikTok/Instagram dari terminal.
+SnatchVid CLI — download video YouTube/TikTok/Instagram/Twitter/Facebook dari terminal.
 
 Usage:
     python cli.py <URL> [--quality 720] [--output downloads] [--info]
@@ -71,7 +71,7 @@ def print_banner():
     print(Color.bold(Color.cyan("""
    ╔══════════════════════════════╗
    ║   S N A T C H V I D          ║
-   ║   TikTok · Instagram · YT    ║
+   ║   Universal Media Downloader ║
    ╚══════════════════════════════╝""")))
     print(Color.dim("   by Rafly Anggara Putra — demo build\n"))
 
@@ -102,7 +102,7 @@ def handle_url(url: str, args) -> int:
     platform = detect_platform(url)
     if not platform:
         print(Color.red(f"  ✗ URL tidak didukung: {url}"))
-        print(Color.dim("    Support: YouTube, TikTok, Instagram."))
+        print(Color.dim("    Support: YouTube, TikTok, Instagram, Twitter / X, Facebook."))
         return 1
 
     conf = PLATFORMS[platform]
@@ -318,7 +318,7 @@ def interactive_wizard() -> int:
 
     while True:
         try:
-            url = input(f"{Color.bold(Color.cyan('[?]'))} {Color.bold('Masukkan URL video')} {Color.dim('(YouTube / TikTok / Instagram)')}: ").strip()
+            url = input(f"{Color.bold(Color.cyan('[?]'))} {Color.bold('Masukkan URL video')} {Color.dim('(YouTube / TikTok / IG / X / FB)')}: ").strip()
         except (KeyboardInterrupt, EOFError):
             print("\n\nSelesai. Sampai jumpa!")
             return 0
@@ -331,7 +331,7 @@ def interactive_wizard() -> int:
 
         platform = detect_platform(url)
         if not platform:
-            print(Color.red("  ✗ URL tidak didukung. Coba link YouTube, TikTok, atau Instagram.\n"))
+            print(Color.red("  ✗ URL tidak didukung. Coba link YouTube, TikTok, Instagram, Twitter/X, atau Facebook.\n"))
             continue
 
         conf = PLATFORMS[platform]
@@ -485,17 +485,19 @@ def main():
         return interactive_wizard()
 
     parser = argparse.ArgumentParser(
-        description="SnatchVid — download video TikTok/Instagram/YouTube",
+        description="SnatchVid — download video YouTube, TikTok, Instagram, Twitter/X, dan Facebook",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="Contoh:\n"
                "  python cli.py https://www.tiktok.com/@user/video/123\n"
                "  python cli.py \"https://youtu.be/abc\" -q 1080\n"
-               "  python cli.py https://www.instagram.com/reel/xyz/ --info\n",
+               "  python cli.py https://www.instagram.com/reel/xyz/ --info\n"
+               "  python cli.py https://x.com/user/status/123456\n"
+               "  python cli.py https://www.facebook.com/reel/123456\n",
     )
     parser.add_argument("urls", nargs="+", help="URL video (satu atau banyak)")
     parser.add_argument(
         "-q", "--quality", default="720", type=quality_type,
-        help="Kualitas video: 'best' atau tinggi piksel berapa pun (default: 720). Hanya dipakai untuk YouTube.",
+        help="Kualitas video: 'best' atau tinggi piksel berapa pun (default: 720). Dipakai untuk YouTube, Twitter/X, & Facebook.",
     )
     parser.add_argument(
         "-o", "--output", default="downloads",

@@ -78,7 +78,7 @@
         <!-- Product Promise -->
         <section class="promise-section">
           <h1 class="promise-headline" data-i18n="promiseHeadline">Paste a link. Get the file.</h1>
-          <p class="promise-subtext" data-i18n="promiseSubtext">Download videos from YouTube, TikTok, and Instagram —
+          <p class="promise-subtext" data-i18n="promiseSubtext">Download videos from YouTube, TikTok, Instagram, Twitter/X, and Facebook —
             quickly and locally.</p>
         </section>
 
@@ -86,7 +86,7 @@
         <section class="input-section">
           <label for="videoUrl" class="field-label" data-i18n="fieldLabelUrl">Video URL</label>
           <div class="url-field-wrap">
-            <input id="videoUrl" class="url-input" type="url" placeholder="Paste a YouTube, TikTok, or Instagram link"
+            <input id="videoUrl" class="url-input" type="url" placeholder="Paste a YouTube, TikTok, Instagram, Twitter/X, or Facebook link"
               data-i18n-placeholder="urlPlaceholder" autocomplete="off" spellcheck="false">
             <button id="btnClear" class="btn-clear" type="button" title="Clear input" aria-label="Clear URL">✕</button>
 
@@ -260,7 +260,7 @@
               <div class="pillar-card">
                 <div class="pillar-title" data-i18n="pillar5Title">Multi-Platform Engine</div>
                 <div class="pillar-desc" data-i18n="pillar5Desc">Seamlessly inspect and download content from YouTube,
-                  TikTok (watermark-free 720p), and Instagram Reels.</div>
+                  TikTok, Instagram Reels, Twitter/X, and Facebook.</div>
               </div>
 
               <div class="pillar-card">
@@ -279,7 +279,7 @@
                 <div class="step-num">1</div>
                 <div class="step-body">
                   <div class="step-title" data-i18n="step1Title">Copy Video URL</div>
-                  <div class="step-text" data-i18n="step1Desc">Browse to YouTube, TikTok, or Instagram and copy the
+                  <div class="step-text" data-i18n="step1Desc">Browse to YouTube, TikTok, Instagram, Twitter/X, or Facebook and copy the
                     video URL from your browser address bar or share sheet.</div>
                 </div>
               </div>
@@ -311,7 +311,7 @@
         <div class="footer-left">
           <span class="footer-copy">© 2026 SnatchVid</span>
           <span class="footer-sep" aria-hidden="true">·</span>
-          <span class="footer-platforms" data-i18n="footerPlatforms">Supports YouTube, TikTok, Instagram</span>
+          <span class="footer-platforms" data-i18n="footerPlatforms">Supports YouTube, TikTok, Instagram, Twitter/X, Facebook</span>
         </div>
         <div class="footer-right">
           <span>Credit: <a href="https://github.com/Apewww" target="_blank" rel="noopener noreferrer"
@@ -409,6 +409,40 @@
               </div>
               <div class="platform-progress-bg">
                 <div id="metricIGBar" class="platform-progress-fill ig" style="width: 0%"></div>
+              </div>
+            </div>
+
+            <!-- Twitter / X Row -->
+            <div class="platform-metric-item">
+              <div class="platform-metric-header">
+                <div class="platform-metric-left">
+                  <span class="platform-tag twitter">🐦 Twitter / X</span>
+                  <span id="metricTWCount" class="platform-metric-count">0 downloads</span>
+                </div>
+                <div class="platform-metric-right">
+                  <span id="metricTWDur" class="platform-metric-duration">0 sec</span>
+                  <span id="metricTWPct" class="platform-metric-pct">0%</span>
+                </div>
+              </div>
+              <div class="platform-progress-bg">
+                <div id="metricTWBar" class="platform-progress-fill tw" style="width: 0%"></div>
+              </div>
+            </div>
+
+            <!-- Facebook Row -->
+            <div class="platform-metric-item">
+              <div class="platform-metric-header">
+                <div class="platform-metric-left">
+                  <span class="platform-tag facebook">📘 Facebook</span>
+                  <span id="metricFBCount" class="platform-metric-count">0 downloads</span>
+                </div>
+                <div class="platform-metric-right">
+                  <span id="metricFBDur" class="platform-metric-duration">0 sec</span>
+                  <span id="metricFBPct" class="platform-metric-pct">0%</span>
+                </div>
+              </div>
+              <div class="platform-progress-bg">
+                <div id="metricFBBar" class="platform-progress-fill fb" style="width: 0%"></div>
               </div>
             </div>
           </div>
